@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Умный калькулятор субтаймингов DDR5</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 1.1em;
+        }
+        .form-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        label {
+            min-width: 220px;
+            font-weight: 600;
+            margin-right: 10px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        select, input {
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            width: auto;
+        }
+        select {
+            min-width: 250px;
+        }
+        input {
+            width: 120px;
+        }
+        .chip-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+        .chip-logo {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+        .samsung { background-color: #14539a; }
+        .skhynix { background-color: #8e44ad; }
+        .micron { background-color: #d35400; }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 25px auto;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+        }
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+        }
+        .results {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            display: none;
+        }
+        .results.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        tr:hover {
+            background-color: #f5f9ff;
+        }
+        .timing-category {
+            background-color: #e3f2fd;
+            font-weight: 600;
+            padding: 8px 15px;
+            border-top: 1px solid #bbdefb;
+            border-bottom: 1px solid #bbdefb;
+        }
+        .recommendation {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.95em;
+        }
+        .warning {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.95em;
+        }
+        .error {
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.95em;
+        }
+        .highlight {
+            background-color: #fffde7;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        .note {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        .tab.active {
+            border-bottom: 3px solid #3498db;
+            font-weight: 600;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .preset {
+            background-color: #f1f8ff;
+            border: 1px solid #bbdefb;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .preset:hover {
+            background-color: #e3f2fd;
+        }
+        .preset.active {
+            border: 1px solid #2196F3;
+            background-color: #bbdefb;
+        }
+        .preset-title {
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+        .preset-specs {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Умный калькулятор субтаймингов DDR5</h1>
+        <p class="subtitle">Выберите ваше оборудование для получения точных рекомендаций</p>
+        
+        <div class="form-section">
+            <h2>Выбор оборудования</h2>
+            
+            <div class="form-group">
+                <label for="platform" class="required">Платформа</label>
+                <select id="platform" onchange="updateMotherboardOptions()">
+                    <option value="">-- Выберите платформу --</option>
+                    <option value="amd_am5">AMD AM5 (Ryzen 7000)</option>
+                    <option value="intel_lga1700">Intel LGA 1700 (12th-14th Gen)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="motherboard" class="required">Материнская плата</label>
+                <select id="motherboard" onchange="updateMotherboardInfo()">
+                    <option value="">-- Сначала выберите платформу --</option>
+                </select>
+                <div id="motherboard-info" class="note" style="margin-top: 8px; display: none;">
+                    <!-- Информация о материнской плате будет отображаться здесь -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="ram-brand" class="required">Бренд ОЗУ</label>
+                <select id="ram-brand" onchange="updateRamModels()">
+                    <option value="">-- Выберите бренд --</option>
+                    <option value="kingston">Kingston</option>
+                    <option value="gskill">G.Skill</option>
+                    <option value="corsair">Corsair</option>
+                    <option value="crucial">Crucial</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="ram-model" class="required">Модель ОЗУ</label>
+                <select id="ram-model" onchange="updateRamInfo()">
+                    <option value="">-- Сначала выберите бренд --</option>
+                </select>
+                <div id="ram-info" class="note" style="margin-top: 8px; display: none;">
+                    <!-- Информация о модуле ОЗУ будет отображаться здесь -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="chip-type" class="required">Тип чипов</label>
+                <select id="chip-type" onchange="updateChipInfo()">
+                    <option value="">-- Выберите тип чипов --</option>
+                    <option value="samsung_bdie">Samsung B-die</option>
+                    <option value="samsung_cdie">Samsung C-die</option>
+                    <option value="samsung_ddie">Samsung D-die</option>
+                    <option value="skhynix_adie">SK hynix A-die</option>
+                    <option value="skhynix_mdie">SK hynix M-die</option>
+                    <option value="micron_ede">Micron E-die</option>
+                    <option value="micron_fdie">Micron F-die</option>
+                    <option value="custom">Другой/Неизвестный</option>
+                </select>
+                <div class="chip-info" id="chip-info" style="margin-top: 8px; display: none;">
+                    <span class="chip-logo" id="chip-logo"></span>
+                    <span id="chip-description"></span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="aggressiveness">Уровень агрессивности</label>
+                <select id="aggressiveness">
+                    <option value="conservative">Консервативный (макс. стабильность)</option>
+                    <option value="balanced" selected>Сбалансированный</option>
+                    <option value="aggressive">Агрессивный (макс. производительность)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2>Основные параметры</h2>
+            
+            <div class="form-group">
+                <label for="frequency" class="required">Целевая частота (МТ/с)</label>
+                <input type="number" id="frequency" placeholder="Например: 6000" min="3200" value="6000">
+            </div>
+            
+            <div class="form-group">
+                <label for="cl" class="required">CAS Latency (CL)</label>
+                <input type="number" id="cl" placeholder="Например: 30" min="26" value="30">
+            </div>
+            
+            <div class="form-group">
+                <label for="trcd" class="required">tRCD</label>
+                <input type="number" id="trcd" placeholder="Например: 38" min="30" value="38">
+            </div>
+            
+            <div class="form-group">
+                <label for="trp" class="required">tRP</label>
+                <input type="number" id="trp" placeholder="Например: 38" min="30" value="38">
+            </div>
+            
+            <div class="form-group">
+                <label for="tras" class="required">tRAS</label>
+                <div style="display: flex; align-items: center;">
+                    <input type="number" id="tras" placeholder="Например: 50" min="40" value="50">
+                    <span style="margin-left: 10px; color: #777;">Мин. рекомендуемое: <span id="min-tras">56</span></span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="vdd">Напряжение DRAM (В)</label>
+                <input type="number" id="vdd" placeholder="Например: 1.35" min="1.1" max="1.5" step="0.01" value="1.35">
+            </div>
+        </div>
+        
+        <button onclick="calculateSubtimings()">Рассчитать субтайминги</button>
+        
+        <div class="results" id="results">
+            <h2>Рекомендуемые субтайминги</h2>
+            <p id="platform-description">Рассчитано для вашей конфигурации</p>
+            
+            <div id="stability-warning" class="warning" style="display: none;">
+                <h3>Предупреждение о стабильности:</h3>
+                <p id="stability-message"></p>
+            </div>
+            
+            <div id="stability-error" class="error" style="display: none;">
+                <h3>Критическая проблема со стабильностью:</h3>
+                <p id="stability-error-message"></p>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="primary">Основные</div>
+                <div class="tab" data-tab="secondary">Вторичные</div>
+                <div class="tab" data-tab="tertiary">Третичные</div>
+            </div>
+            
+            <div class="tab-content active" id="primary-content">
+                <table>
+                    <tr>
+                        <th>Параметр</th>
+                        <th>Значение</th>
+                        <th>Рекомендация</th>
+                    </tr>
+                    <tr>
+                        <td>tRC (Row Cycle Time)</td>
+                        <td id="trc-value">-</td>
+                        <td id="trc-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>tRFC (Refresh Cycle)</td>
+                        <td id="trfc-value">-</td>
+                        <td id="trfc-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>tRFC2</td>
+                        <td id="trfc2-value">-</td>
+                        <td id="trfc2-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>tRFCsb</td>
+                        <td id="trfcsb-value">-</td>
+                        <td id="trfcsb-recommendation">-</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="tab-content" id="secondary-content">
+                <table>
+                    <tr>
+                        <th>Параметр</th>
+                        <th>Значение</th>
+                        <th>Рекомендация</th>
+                    </tr>
+                    <tr>
+                        <td>tRRD_S (Row to Row Short)</td>
+                        <td id="trrd_s-value">-</td>
+                        <td id="trrd_s-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>tRRD_L (Row to Row Long)</td>
+                        <td id="trrd_l-value">-</td>
+                        <td id="trrd_l-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>tFAW (Four Activate Window)</td>
+                        <td id="tfaw-value">-</td>
+                        <td id="tfaw-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>tWTR_S (Write to Read Short)</td>
+                        <td id="twtr_s-value">-</td>
+                        <td id="twtr_s-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>tWTR_L (Write to Read Long)</td>
+                        <td id="twtr_l-value">-</td>
+                        <td id="twtr_l-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>tRTP (Read to Precharge)</td>
+                        <td id="trtp-value">-</td>
+                        <td id="trtp-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>tCCD_S (CAS to CAS Short)</td>
+                        <td id="tccd_s-value">-</td>
+                        <td id="tccd_s-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>tCCD_L (CAS to CAS Long)</td>
+                        <td id="tccd_l-value">-</td>
+                        <td id="tccd_l-recommendation">-</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="tab-content" id="tertiary-content">
+                <table>
+                    <tr>
+                        <th>Параметр</th>
+                        <th>Значение</th>
+                        <th>Рекомендация</th>
+                    </tr>
+                    <tr>
+                        <td>tREFI (Refresh Interval)</td>
+                        <td id="trefi-value">-</td>
+                        <td id="trefi-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>tCKE (Clock Enable)</td>
+                        <td id="tcke-value">-</td>
+                        <td id="tcke-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>tXP (Exit Power Down)</td>
+                        <td id="txp-value">-</td>
+                        <td id="txp-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>tWR (Write Recovery)</td>
+                        <td id="twr-value">-</td>
+                        <td id="twr-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>ProcODT</td>
+                        <td id="procodt-value">-</td>
+                        <td id="procodt-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>Gear Down Mode</td>
+                        <td id="gear-down-value">-</td>
+                        <td id="gear-down-recommendation">-</td>
+                    </tr>
+                    <tr>
+                        <td>CMD Rate</td>
+                        <td id="cmd-rate-value">-</td>
+                        <td id="cmd-rate-recommendation">-</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="recommendation" id="voltage-recommendations" style="display: none;">
+            <h3>Рекомендуемые напряжения для стабильности:</h3>
+            <table>
+                <tr>
+                    <th>Параметр</th>
+                    <th>Рекомендуемое значение</th>
+                    <th>Примечание</th>
+                </tr>
+                <tr>
+                    <td>DRAM Voltage</td>
+                    <td id="vdd-recommendation">-</td>
+                    <td>Начните с минимального значения и постепенно увеличивайте</td>
+                </tr>
+                <tr>
+                    <td>SOC Voltage</td>
+                    <td id="soc-recommendation">-</td>
+                    <td>Критично для стабильности на AM5 платформе</td>
+                </tr>
+                <tr>
+                    <td>CPU VDDG CRB</td>
+                    <td id="vddg-recommendation">-</td>
+                    <td>Помогает стабилизировать высокие частоты</td>
+                </tr>
+                <tr>
+                    <td>ProcODT</td>
+                    <td id="procodt-voltage-recommendation">-</td>
+                    <td>Влияет на качество сигнала</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="warning">
+            <h3>Примеры популярных конфигураций:</h3>
+            
+            <div class="preset" onclick="loadPreset('amd_kingston_adie')">
+                <div class="preset-title">AMD AM5 + Kingston FURY Beast + SK hynix A-die
+                    <span class="highlight">6000 МТ/с 30-38-38-50</span>
+                </div>
+                <div class="preset-specs">Gigabyte B650 AORUS Elite AX V2 | H5CG48AEBDX018 | 2024</div>
+            </div>
+            
+            <div class="preset" onclick="loadPreset('intel_gskill_bdie')">
+                <div class="preset-title">Intel 13th Gen + G.Skill Trident Z5 + Samsung B-die
+                    <span class="highlight">6000 МТ/с 30-36-36-76</span>
+                </div>
+                <div class="preset-specs">ASUS ROG Maximus Z790 Hero | HX48C15PB4K2 | 2022</div>
+            </div>
+            
+            <div class="preset" onclick="loadPreset('amd_corsair_mdie')">
+                <div class="preset-title">AMD AM5 + Corsair Vengeance + SK hynix M-die
+                    <span class="highlight">6000 МТ/с 32-38-38-76</span>
+                </div>
+                <div class="preset-specs">MSI X670E PRO | CMK32GX5M2E6000C32 | 2023</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // База данных материнских плат
+        const motherboards = {
+            amd_am5: [
+                {id: 'gigabyte_b650_aorus_elite', name: 'Gigabyte B650 AORUS Elite AX V2', chipset: 'B650', description: 'Популярная плата с хорошей поддержкой разгона DDR5'},
+                {id: 'asus_rog_strix_x670e', name: 'ASUS ROG Strix X670E-F Gaming WiFi', chipset: 'X670E', description: 'Флагманская плата с отличной стабильностью на высоких частотах'},
+                {id: 'msi_pro_x670_p', name: 'MSI PRO X670-P WiFi', chipset: 'X670', description: 'Бюджетная плата с базовой поддержкой разгона'},
+                {id: 'asrock_b650_steel_legend', name: 'ASRock B650 Steel Legend', chipset: 'B650', description: 'Хорошая поддержка разгона по разумной цене'}
+            ],
+            intel_lga1700: [
+                {id: 'asus_rog_strix_z790', name: 'ASUS ROG Strix Z790-E Gaming WiFi', chipset: 'Z790', description: 'Отличная поддержка разгона DDR5, популярна среди энтузиастов'},
+                {id: 'msi_meg_z790', name: 'MSI MEG Z790 Godlike', chipset: 'Z790', description: 'Флагманская плата с лучшей стабильностью разгона'},
+                {id: 'gigabyte_z790_aorus_master', name: 'Gigabyte Z790 AORUS Master', chipset: 'Z790', description: 'Хорошая поддержка разгона с удобным BIOS'},
+                {id: 'asrock_z790_toygaming', name: 'ASRock Z790 Taichi OC Formula', chipset: 'Z790', description: 'Специализированная плата для разгона'}
+            ]
+        };
+        
+        // База данных модулей ОЗУ
+        const ramModels = {
+            kingston: [
+                {id: 'kingston_fury_beast_6000', name: 'Kingston FURY Beast KF560C36BBEK2-32', speed: '6000', timings: '36-38-38-80', description: 'Популярная серия с чипами SK hynix A-die/M-die'},
+                {id: 'kingston_fury_beast_5600', name: 'Kingston FURY Beast KF556C36BBEK2-32', speed: '5600', timings: '36-36-36-76', description: 'Хорошие показатели разгона с чипами SK hynix'}
+            ],
+            gskill: [
+                {id: 'gskill_trident_z5_6000', name: 'G.Skill Trident Z5 RGB F5-6000J3036F16GX2-TZ5NK', speed: '6000', timings: '30-36-36-76', description: 'Премиальная серия с чипами Samsung B-die/C-die'},
+                {id: 'gskill_flare_x5_6000', name: 'G.Skill Flare X5 F5-6000J3289G16GX2-FX5RD', speed: '6000', timings: '32-36-36-76', description: 'Специально для AMD с чипами Samsung C-die'}
+            ],
+            corsair: [
+                {id: 'corsair_vengeance_6000', name: 'Corsair Vengeance RGB DDR5 CMK32GX5M2E6000C32', speed: '6000', timings: '32-36-36-76', description: 'Популярная серия с чипами SK hynix M-die'},
+                {id: 'corsair_dominator_6400', name: 'Corsair Dominator Platinum RGB CD52640016C32U4', speed: '6400', timings: '32-39-39-76', description: 'Флагманская серия с хорошим разгонным потенциалом'}
+            ],
+            crucial: [
+                {id: 'crucial_ballistix_6000', name: 'Crucial Ballistix DDR5 BL2K16G60C32U4B', speed: '6000', timings: '32-36-36-76', description: 'Серия с чипами Micron E-die/F-die'},
+                {id: 'crucial_pro_5600', name: 'Crucial Pro DDR5 P325660G60C3610B', speed: '5600', timings: '36-36-36-76', description: 'Профессиональная серия с хорошей стабильностью'}
+            ]
+        };
+        
+        // База данных рекомендаций по чипам
+        const chipRecommendations = {
+            samsung_bdie: {
+                name: "Samsung B-die",
+                description: "Лучшие чипы для разгона DDR4, в DDR5 встречаются редко. Отличная масштабируемость по частоте.",
+                minVdd: 1.35,
+                maxVdd: 1.45,
+                trrd_s: {conservative: 4, balanced: 4, aggressive: 3},
+                trrd_l: {conservative: 6, balanced: 6, aggressive: 5},
+                tfaw: {conservative: 16, balanced: 16, aggressive: 14},
+                tccd_s: {conservative: 4, balanced: 4, aggressive: 3},
+                tccd_l: {conservative: 5, balanced: 5, aggressive: 4},
+                trfc: {conservative: 260, balanced: 280, aggressive: 300}
+            },
+            samsung_cdie: {
+                name: "Samsung C-die",
+                description: "Хорошие чипы для DDR5, лучшие показатели по частоте, но хуже по таймингам чем B-die.",
+                minVdd: 1.35,
+                maxVdd: 1.45,
+                trrd_s: {conservative: 4, balanced: 4, aggressive: 3},
+                trrd_l: {conservative: 6, balanced: 6, aggressive: 5},
+                tfaw: {conservative: 16, balanced: 16, aggressive: 14},
+                tccd_s: {conservative: 4, balanced: 4, aggressive: 3},
+                tccd_l: {conservative: 5, balanced: 5, aggressive: 4},
+                trfc: {conservative: 270, balanced: 290, aggressive: 310}
+            },
+            samsung_ddie: {
+                name: "Samsung D-die",
+                description: "Новые чипы с хорошим балансом между частотой и таймингами. Распространены в новых модулях.",
+                minVdd: 1.35,
+                maxVdd: 1.45,
+                trrd_s: {conservative: 4, balanced: 4, aggressive: 4},
+                trrd_l: {conservative: 6, balanced: 6, aggressive: 6},
+                tfaw: {conservative: 16, balanced: 16, aggressive: 16},
+                tccd_s: {conservative: 4, balanced: 4, aggressive: 4},
+                tccd_l: {conservative: 5, balanced: 5, aggressive: 5},
+                trfc: {conservative: 280, balanced: 300, aggressive: 320}
+            },
+            skhynix_adie: {
+                name: "SK hynix A-die",
+                description: "Одни из лучших чипов DDR5, отличная масштабируемость по таймингам, хорошие показатели по частоте.",
+                minVdd: 1.35,
+                maxVdd: 1.45,
+                trrd_s: {conservative: 4, balanced: 4, aggressive: 3},
+                trrd_l: {conservative: 6, balanced: 6, aggressive: 5},
+                tfaw: {conservative: 16, balanced: 16, aggressive: 14},
+                tccd_s: {conservative: 4, balanced: 4, aggressive: 3},
+                tccd_l: {conservative: 5, balanced: 5, aggressive: 4},
+                trfc: {conservative: 280, balanced: 280, aggressive: 300}
+            },
+            skhynix_mdie: {
+                name: "SK hynix M-die",
+                description: "Хорошие чипы DDR5, лучше масштабируются по частоте, чем по таймингам.",
+                minVdd: 1.35,
+                maxVdd: 1.45,
+                trrd_s: {conservative: 4, balanced: 4, aggressive: 4},
+                trrd_l: {conservative: 6, balanced: 6, aggressive: 6},
+                tfaw: {conservative: 16, balanced: 16, aggressive: 16},
+                tccd_s: {conservative: 4, balanced: 4, aggressive: 4},
+                tccd_l: {conservative: 5, balanced: 5, aggressive: 5},
+                trfc: {conservative: 290, balanced: 300, aggressive: 310}
+            },
+            micron_ede: {
+                name: "Micron E-die",
+                description: "Чипы с хорошей стабильностью, но ограниченным потенциалом разгона. Распространены в бюджетных модулях.",
+                minVdd: 1.35,
+                maxVdd: 1.45,
+                trrd_s: {conservative: 4, balanced: 5, aggressive: 5},
+                trrd_l: {conservative: 6, balanced: 7, aggressive: 7},
+                tfaw: {conservative: 16, balanced: 18, aggressive: 18},
+                tccd_s: {conservative: 4, balanced: 5, aggressive: 5},
+                tccd_l: {conservative: 5, balanced: 6, aggressive: 6},
+                trfc: {conservative: 300, balanced: 310, aggressive: 320}
+            },
+            micron_fdie: {
+                name: "Micron F-die",
+                description: "Новые чипы Micron с улучшенным потенциалом разгона по сравнению с E-die.",
+                minVdd: 1.35,
+                maxVdd: 1.45,
+                trrd_s: {conservative: 4, balanced: 4, aggressive: 4},
+                trrd_l: {conservative: 6, balanced: 6, aggressive: 6},
+                tfaw: {conservative: 16, balanced: 16, aggressive: 16},
+                tccd_s: {conservative: 4, balanced: 4, aggressive: 4},
+                tccd_l: {conservative: 5, balanced: 5, aggressive: 5},
+                trfc: {conservative: 290, balanced: 300, aggressive: 310}
+            },
+            custom: {
+                name: "Другой/Неизвестный",
+                description: "Стандартные рекомендации для неизвестных чипов DDR5.",
+                minVdd: 1.35,
+                maxVdd: 1.50,
+                trrd_s: {conservative: 4, balanced: 5, aggressive: 5},
+                trrd_l: {conservative: 6, balanced: 7, aggressive: 7},
+                tfaw: {conservative: 16, balanced: 18, aggressive: 18},
+                tccd_s: {conservative: 4, balanced: 5, aggressive: 5},
+                tccd_l: {conservative: 5, balanced: 6, aggressive: 6},
+                trfc: {conservative: 300, balanced: 310, aggressive: 320}
+            }
+        };
+        
+        // База данных рекомендаций для материнских плат
+        const motherboardRecommendations = {
+            gigabyte_b650_aorus_elite: {
+                socVoltage: {conservative: "1.10-1.15В", balanced: "1.15-1.20В", aggressive: "1.20-1.25В"},
+                vddg: {conservative: "0.95-1.00В", balanced: "1.00-1.05В", aggressive: "1.05-1.10В"},
+                procodt: {conservative: "40-48Ω", balanced: "48-60Ω", aggressive: "60Ω"},
+                gearDown: {conservative: "Enabled", balanced: "Auto", aggressive: "Disabled"}
+            },
+            asus_rog_strix_x670e: {
+                socVoltage: {conservative: "1.10-1.15В", balanced: "1.15-1.20В", aggressive: "1.20-1.25В"},
+                vddg: {conservative: "0.95-1.00В", balanced: "1.00-1.05В", aggressive: "1.05-1.10В"},
+                procodt: {conservative: "40-48Ω", balanced: "48-60Ω", aggressive: "60Ω"},
+                gearDown: {conservative: "Enabled", balanced: "Auto", aggressive: "Disabled"}
+            },
+            msi_pro_x670_p: {
+                socVoltage: {conservative: "1.15-1.20В", balanced: "1.20-1.25В", aggressive: "1.25-1.30В"},
+                vddg: {conservative: "1.00-1.05В", balanced: "1.05-1.10В", aggressive: "1.10-1.15В"},
+                procodt: {conservative: "48-60Ω", balanced: "60Ω", aggressive: "60Ω"},
+                gearDown: {conservative: "Enabled", balanced: "Enabled", aggressive: "Auto"}
+            },
+            asrock_b650_steel_legend: {
+                socVoltage: {conservative: "1.15-1.20В", balanced: "1.20-1.25В", aggressive: "1.25-1.30В"},
+                vddg: {conservative: "1.00-1.05В", balanced: "1.05-1.10В", aggressive: "1.10-1.15В"},
+                procodt: {conservative: "48-60Ω", balanced: "60Ω", aggressive: "60Ω"},
+                gearDown: {conservative: "Enabled", balanced: "Enabled", aggressive: "Auto"}
+            },
+            asus_rog_strix_z790: {
+                socVoltage: {conservative: "N/A", balanced: "N/A", aggressive: "N/A"},
+                vddg: {conservative: "1.00-1.05В", balanced: "1.05-1.10В", aggressive: "1.10-1.15В"},
+                procodt: {conservative: "40-48Ω", balanced: "48-60Ω", aggressive: "60Ω"},
+                gearDown: {conservative: "N/A", balanced: "N/A", aggressive: "N/A"}
+            },
+            msi_meg_z790: {
+                socVoltage: {conservative: "N/A", balanced: "N/A", aggressive: "N/A"},
+                vddg: {conservative: "1.00-1.05В", balanced: "1.05-1.10В", aggressive: "1.10-1.15В"},
+                procodt: {conservative: "40-48Ω", balanced: "48-60Ω", aggressive: "60Ω"},
+                gearDown: {conservative: "N/A", balanced: "N/A", aggressive: "N/A"}
+            },
+            gigabyte_z790_aorus_master: {
+                socVoltage: {conservative: "N/A", balanced: "N/A", aggressive: "N/A"},
+                vddg: {conservative: "1.00-1.05В", balanced: "1.05-1.10В", aggressive: "1.10-1.15В"},
+                procodt: {conservative: "40-48Ω", balanced: "48-60Ω", aggressive: "60Ω"},
+                gearDown: {conservative: "N/A", balanced: "N/A", aggressive: "N/A"}
+            },
+            asrock_z790_toygaming: {
+                socVoltage: {conservative: "N/A", balanced: "N/A", aggressive: "N/A"},
+                vddg: {conservative: "1.00-1.05В", balanced: "1.05-1.10В", aggressive: "1.10-1.15В"},
+                procodt: {conservative: "40-48Ω", balanced: "48-60Ω", aggressive: "60Ω"},
+                gearDown: {conservative: "N/A", balanced: "N/A", aggressive: "N/A"}
+            }
+        };
+        
+        // Функция для обновления списка материнских плат
+        function updateMotherboardOptions() {
+            const platform = document.getElementById('platform').value;
+            const motherboardSelect = document.getElementById('motherboard');
+            
+            // Очищаем текущий список
+            motherboardSelect.innerHTML = '<option value="">-- Выберите материнскую плату --</option>';
+            
+            if (platform && motherboards[platform]) {
+                motherboards[platform].forEach(mb => {
+                    const option = document.createElement('option');
+                    option.value = mb.id;
+                    option.textContent = `${mb.name} (${mb.chipset})`;
+                    motherboardSelect.appendChild(option);
+                });
+            }
+        }
+        
+        // Функция для отображения информации о материнской плате
+        function updateMotherboardInfo() {
+            const mbId = document.getElementById('motherboard').value;
+            const infoDiv = document.getElementById('motherboard-info');
+            
+            if (!mbId) {
+                infoDiv.style.display = 'none';
+                return;
+            }
+            
+            const platform = document.getElementById('platform').value;
+            const mb = motherboards[platform].find(m => m.id === mbId);
+            
+            if (mb) {
+                infoDiv.innerHTML = `<strong>${mb.name}:</strong> ${mb.description}`;
+                infoDiv.style.display = 'block';
+            } else {
+                infoDiv.style.display = 'none';
+            }
+        }
+        
+        // Функция для обновления списка моделей ОЗУ
+        function updateRamModels() {
+            const brand = document.getElementById('ram-brand').value;
+            const ramModelSelect = document.getElementById('ram-model');
+            
+            // Очищаем текущий список
+            ramModelSelect.innerHTML = '<option value="">-- Выберите модель ОЗУ --</option>';
+            
+            if (brand && ramModels[brand]) {
+                ramModels[brand].forEach(ram => {
+                    const option = document.createElement('option');
+                    option.value = ram.id;
+                    option.textContent = `${ram.name} (${ram.speed} МТ/с, ${ram.timings})`;
+                    ramModelSelect.appendChild(option);
+                });
+            }
+        }
+        
+        // Функция для отображения информации о модуле ОЗУ
+        function updateRamInfo() {
+            const brand = document.getElementById('ram-brand').value;
+            const modelId = document.getElementById('ram-model').value;
+            const infoDiv = document.getElementById('ram-info');
+            
+            if (!brand || !modelId) {
+                infoDiv.style.display = 'none';
+                return;
+            }
+            
+            const ram = ramModels[brand].find(r => r.id === modelId);
+            
+            if (ram) {
+                infoDiv.innerHTML = `<strong>${ram.name}:</strong> ${ram.description}`;
+                infoDiv.style.display = 'block';
+            } else {
+                infoDiv.style.display = 'none';
+            }
+        }
+        
+        // Функция для отображения информации о чипах
+        function updateChipInfo() {
+            const chipType = document.getElementById('chip-type').value;
+            const chipInfoDiv = document.getElementById('chip-info');
+            const chipLogo = document.getElementById('chip-logo');
+            const chipDesc = document.getElementById('chip-description');
+            
+            if (!chipType || chipType === 'custom') {
+                chipInfoDiv.style.display = 'none';
+                return;
+            }
+            
+            const chip = chipRecommendations[chipType];
+            
+            if (chip) {
+                // Устанавливаем цвет логотипа в зависимости от производителя
+                if (chipType.includes('samsung')) {
+                    chipLogo.className = 'chip-logo samsung';
+                    chipLogo.textContent = 'S';
+                } else if (chipType.includes('skhynix')) {
+                    chipLogo.className = 'chip-logo skhynix';
+                    chipLogo.textContent = 'H';
+                } else if (chipType.includes('micron')) {
+                    chipLogo.className = 'chip-logo micron';
+                    chipLogo.textContent = 'M';
+                }
+                
+                chipDesc.textContent = chip.description;
+                chipInfoDiv.style.display = 'flex';
+            } else {
+                chipInfoDiv.style.display = 'none';
+            }
+        }
+        
+        // Функция для автоматического расчёта рекомендуемого tRAS
+        function calculateRecommendedTras() {
+            const trcd = parseFloat(document.getElementById('trcd').value) || 38;
+            const trp = parseFloat(document.getElementById('trp').value) || 38;
+            
+            // Рекомендуемое значение tRAS = tRCD + tRP - 10
+            const recommendedTras = trcd + trp - 10;
+            
+            // Обновляем минимально рекомендуемое значение
+            document.getElementById('min-tras').textContent = recommendedTras;
+        }
+        
+        // Загрузка примеров конфигураций
+        function loadPreset(presetId) {
+            switch(presetId) {
+                case 'amd_kingston_adie':
+                    document.getElementById('platform').value = 'amd_am5';
+                    updateMotherboardOptions();
+                    setTimeout(() => {
+                        document.getElementById('motherboard').value = 'gigabyte_b650_aorus_elite';
+                        updateMotherboardInfo();
+                        
+                        document.getElementById('ram-brand').value = 'kingston';
+                        updateRamModels();
+                        setTimeout(() => {
+                            document.getElementById('ram-model').value = 'kingston_fury_beast_6000';
+                            updateRamInfo();
+                            
+                            document.getElementById('chip-type').value = 'skhynix_adie';
+                            updateChipInfo();
+                            
+                            document.getElementById('frequency').value = '6000';
+                            document.getElementById('cl').value = '30';
+                            document.getElementById('trcd').value = '38';
+                            document.getElementById('trp').value = '38';
+                            document.getElementById('tras').value = '50';
+                            document.getElementById('vdd').value = '1.35';
+                            calculateRecommendedTras();
+                        }, 100);
+                    }, 100);
+                    break;
+                    
+                case 'intel_gskill_bdie':
+                    document.getElementById('platform').value = 'intel_lga1700';
+                    updateMotherboardOptions();
+                    setTimeout(() => {
+                        document.getElementById('motherboard').value = 'asus_rog_strix_z790';
+                        updateMotherboardInfo();
+                        
+                        document.getElementById('ram-brand').value = 'gskill';
+                        updateRamModels();
+                        setTimeout(() => {
+                            document.getElementById('ram-model').value = 'gskill_trident_z5_6000';
+                            updateRamInfo();
+                            
+                            document.getElementById('chip-type').value = 'samsung_bdie';
+                            updateChipInfo();
+                            
+                            document.getElementById('frequency').value = '6000';
+                            document.getElementById('cl').value = '30';
+                            document.getElementById('trcd').value = '36';
+                            document.getElementById('trp').value = '36';
+                            document.getElementById('tras').value = '76';
+                            document.getElementById('vdd').value = '1.35';
+                            calculateRecommendedTras();
+                        }, 100);
+                    }, 100);
+                    break;
+                    
+                case 'amd_corsair_mdie':
+                    document.getElementById('platform').value = 'amd_am5';
+                    updateMotherboardOptions();
+                    setTimeout(() => {
+                        document.getElementById('motherboard').value = 'msi_pro_x670_p';
+                        updateMotherboardInfo();
+                        
+                        document.getElementById('ram-brand').value = 'corsair';
+                        updateRamModels();
+                        setTimeout(() => {
+                            document.getElementById('ram-model').value = 'corsair_vengeance_6000';
+                            updateRamInfo();
+                            
+                            document.getElementById('chip-type').value = 'skhynix_mdie';
+                            updateChipInfo();
+                            
+                            document.getElementById('frequency').value = '6000';
+                            document.getElementById('cl').value = '32';
+                            document.getElementById('trcd').value = '38';
+                            document.getElementById('trp').value = '38';
+                            document.getElementById('tras').value = '76';
+                            document.getElementById('vdd').value = '1.35';
+                            calculateRecommendedTras();
+                        }, 100);
+                    }, 100);
+                    break;
+            }
+        }
+        
+        function calculateSubtimings() {
+            // Получаем выбранные параметры
+            const platform = document.getElementById('platform').value;
+            const motherboard = document.getElementById('motherboard').value;
+            const ramBrand = document.getElementById('ram-brand').value;
+            const ramModel = document.getElementById('ram-model').value;
+            const chipType = document.getElementById('chip-type').value;
+            const aggressiveness = document.getElementById('aggressiveness').value;
+            
+            // Проверка обязательных полей
+            if (!platform || !motherboard || !ramBrand || !ramModel || !chipType) {
+                alert('Пожалуйста, заполните все обязательные поля выбора оборудования');
+                return;
+            }
+            
+            // Получаем основные параметры
+            const frequency = parseFloat(document.getElementById('frequency').value);
+            const cl = parseFloat(document.getElementById('cl').value);
+            const trcd = parseFloat(document.getElementById('trcd').value);
+            const trp = parseFloat(document.getElementById('trp').value);
+            const tras = parseFloat(document.getElementById('tras').value);
+            const vdd = parseFloat(document.getElementById('vdd').value) || 1.35;
+            
+            // Проверка основных параметров
+            if (isNaN(frequency) || frequency < 3200) {
+                alert('Пожалуйста, введите корректную частоту DDR5 (минимум 3200 МТ/с)');
+                return;
+            }
+            
+            if (isNaN(cl) || cl < 26 || isNaN(trcd) || trcd < 30 || 
+                isNaN(trp) || trp < 30 || isNaN(tras) || tras < 40) {
+                alert('Пожалуйста, проверьте значения основных таймингов');
+                return;
+            }
+            
+            // Рассчитываем минимально рекомендуемый tRAS
+            const minRecommendedTras = trcd + trp - 10;
+            document.getElementById('min-tras').textContent = minRecommendedTras;
+            
+            // Показываем результаты
+            document.getElementById('results').classList.add('active');
+            document.getElementById('voltage-recommendations').style.display = 'block';
+            
+            // Получаем рекомендации для выбранных чипов
+            const chipRec = chipRecommendations[chipType];
+            const mbRec = motherboardRecommendations[motherboard];
+            
+            // Проверка стабильности
+            const stabilityWarning = document.getElementById('stability-warning');
+            const stabilityError = document.getElementById('stability-error');
+            const stabilityMessage = document.getElementById('stability-message');
+            const stabilityErrorMessage = document.getElementById('stability-error-message');
+            
+            // Сброс предыдущих сообщений
+            stabilityWarning.style.display = 'none';
+            stabilityError.style.display = 'none';
+            
+            // Проверка критических условий
+            if (tras < minRecommendedTras) {
+                const diff = minRecommendedTras - tras;
+                stabilityErrorMessage.textContent = 
+                    `Значение tRAS (${tras}) ниже рекомендуемого минимума (${minRecommendedTras}). ` +
+                    `Это может привести к серьезным проблемам со стабильности. ` +
+                    `Рекомендуется увеличить tRAS как минимум до ${minRecommendedTras}.`;
+                stabilityError.style.display = 'block';
+            } 
+            else if (tras < minRecommendedTras + 2) {
+                stabilityMessage.textContent = 
+                    `Значение tRAS (${tras}) близко к рекомендуемому минимуму (${minRecommendedTras}). ` +
+                    `Возможны проблемы со стабильности. Рекомендуется увеличить tRAS до ${minRecommendedTras + 2} ` +
+                    `или повысить напряжение DRAM до ${chipRec.minVdd + 0.05}В.`;
+                stabilityWarning.style.display = 'block';
+            }
+            else {
+                stabilityMessage.textContent = 
+                    `Значение tRAS (${tras}) находится в безопасном диапазоне (рекомендуемый минимум: ${minRecommendedTras}). ` +
+                    `Это повышает шансы на стабильную работу с выбранными таймингами.`;
+                stabilityWarning.style.display = 'block';
+            }
+            
+            // Рассчитываем tRC
+            const trc = tras + trp - 10;
+            
+            // Формируем описание платформы
+            let platformDesc = "Рассчитано для вашей конфигурации: ";
+            platformDesc += document.querySelector(`#motherboard option[value="${motherboard}"]`).textContent + ", ";
+            platformDesc += document.querySelector(`#ram-model option[value="${ramModel}"]`).textContent + ", ";
+            platformDesc += chipRec.name;
+            document.getElementById('platform-description').textContent = platformDesc;
+            
+            // Заполняем значения на основе рекомендаций для чипов
+            document.getElementById('trc-value').textContent = Math.round(trc);
+            document.getElementById('trfc-value').textContent = chipRec.trfc[aggressiveness];
+            document.getElementById('trfc2-value').textContent = Math.round(chipRec.trfc[aggressiveness] * 0.57);
+            document.getElementById('trfcsb-value').textContent = Math.round(chipRec.trfc[aggressiveness] * 0.43);
+            document.getElementById('trrd_s-value').textContent = chipRec.trrd_s[aggressiveness];
+            document.getElementById('trrd_l-value').textContent = chipRec.trrd_l[aggressiveness];
+            document.getElementById('tfaw-value').textContent = chipRec.tfaw[aggressiveness];
+            document.getElementById('twtr_s-value').textContent = chipRec.trrd_s[aggressiveness];
+            document.getElementById('twtr_l-value').textContent = chipRec.trrd_l[aggressiveness];
+            document.getElementById('trtp-value').textContent = Math.max(8, cl - 2);
+            document.getElementById('tccd_s-value').textContent = chipRec.tccd_s[aggressiveness];
+            document.getElementById('tccd_l-value').textContent = chipRec.tccd_l[aggressiveness];
+            document.getElementById('trefi-value').textContent = '9900';
+            document.getElementById('tcke-value').textContent = '3';
+            document.getElementById('txp-value').textContent = frequency >= 6000 ? '6' : '5';
+            document.getElementById('twr-value').textContent = frequency >= 6000 ? '54' : '48';
+            document.getElementById('procodt-value').textContent = mbRec.procodt[aggressiveness];
+            document.getElementById('gear-down-value').textContent = mbRec.gearDown[aggressiveness];
+            document.getElementById('cmd-rate-value').textContent = '1T';
+            
+            // Заполняем рекомендации
+            document.getElementById('trc-recommendation').textContent = 
+                `tRAS + tRP - 10 = ${tras} + ${trp} - 10 = ${Math.round(trc)}`;
+            
+            document.getElementById('trfc-recommendation').textContent = 
+                `Для ${chipRec.name}: ${chipRec.trfc[aggressiveness]} (увеличьте при нестабильности)`;
+            
+            document.getElementById('trfc2-recommendation').textContent = 
+                `tRFC × 0.57 = ${chipRec.trfc[aggressiveness]} × 0.57 ≈ ${Math.round(chipRec.trfc[aggressiveness] * 0.57)}`;
+            
+            document.getElementById('trfcsb-recommendation').textContent = 
+                `tRFC × 0.43 = ${chipRec.trfc[aggressiveness]} × 0.43 ≈ ${Math.round(chipRec.trfc[aggressiveness] * 0.43)}`;
+            
+            document.getElementById('trrd_s-recommendation').textContent = 
+                `Для ${aggressiveness} настроек: ${chipRec.trrd_s[aggressiveness]} (${chipRec.name})`;
+            
+            document.getElementById('trrd_l-recommendation').textContent = 
+                `Для ${aggressiveness} настроек: ${chipRec.trrd_l[aggressiveness]} (${chipRec.name})`;
+            
+            document.getElementById('tfaw-recommendation').textContent = 
+                `Критично для стабильности: ${chipRec.tfaw[aggressiveness]} (уменьшение улучшает производительность)`;
+            
+            document.getElementById('twtr_s-recommendation').textContent = 
+                `Для ${aggressiveness} настроек: ${chipRec.trrd_s[aggressiveness]} (${chipRec.name})`;
+            
+            document.getElementById('twtr_l-recommendation').textContent = 
+                `Для ${aggressiveness} настроек: ${chipRec.trrd_l[aggressiveness]} (${chipRec.name})`;
+            
+            document.getElementById('trtp-recommendation').textContent = 
+                `CL - 2 = ${cl} - 2 = ${Math.max(8, cl - 2)} (минимум 8)`;
+            
+            document.getElementById('tccd_s-recommendation').textContent = 
+                `Для ${aggressiveness} настроек: ${chipRec.tccd_s[aggressiveness]} (${chipRec.name})`;
+            
+            document.getElementById('tccd_l-recommendation').textContent = 
+                `Для ${aggressiveness} настроек: ${chipRec.tccd_l[aggressiveness]} (${chipRec.name})`;
+            
+            document.getElementById('trefi-recommendation').textContent = 
+                `Максимальное значение: 9900 (выше = лучше)`;
+            
+            document.getElementById('tcke-recommendation').textContent = 
+                `Минимальное значение для DDR5: 3`;
+            
+            document.getElementById('txp-recommendation').textContent = 
+                `Оптимально для ${frequency} МТ/с: ${frequency >= 6000 ? '6' : '5'}`;
+            
+            document.getElementById('twr-recommendation').textContent = 
+                `Минимум для ${frequency} МТ/с: ${frequency >= 6000 ? '54' : '48'} (кратно 6)`;
+            
+            document.getElementById('procodt-recommendation').textContent = 
+                `Рекомендуется: ${mbRec.procodt[aggressiveness]} (настройка зависит от материнской платы)`;
+            
+            document.getElementById('gear-down-recommendation').textContent = 
+                `Для ${frequency} МТ/с: ${mbRec.gearDown[aggressiveness]}`;
+            
+            document.getElementById('cmd-rate-recommendation').textContent = 
+                `Оптимально для стабильности: 1T`;
+            
+            // Расчет рекомендуемых напряжений
+            let vddRec, socRec, vddgRec, procodtRec;
+            
+            if (mbRec.socVoltage) {
+                socRec = mbRec.socVoltage[aggressiveness];
+                vddgRec = mbRec.vddg[aggressiveness];
+                procodtRec = mbRec.procodt[aggressiveness];
+            } else {
+                socRec = "См. документацию";
+                vddgRec = "1.00-1.10В";
+                procodtRec = "48-60Ω";
+            }
+            
+            vddRec = `${chipRec.minVdd + (aggressiveness === 'aggressive' ? 0.05 : 0).toFixed(2)}-${chipRec.maxVdd}В`;
+            
+            // Если tRAS ниже рекомендуемого, увеличиваем напряжения
+            if (tras < minRecommendedTras) {
+                vddRec = `${(chipRec.minVdd + 0.1).toFixed(2)}-${(chipRec.maxVdd + 0.05).toFixed(2)}В (минимум)`;
+            }
+            
+            // Заполняем рекомендации по напряжениям
+            document.getElementById('vdd-recommendation').textContent = vddRec;
+            document.getElementById('soc-recommendation').textContent = socRec;
+            document.getElementById('vddg-recommendation').textContent = vddgRec;
+            document.getElementById('procodt-voltage-recommendation').textContent = procodtRec;
+            
+            // Настройка вкладок
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Удаляем активный класс со всех вкладок
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Добавляем активный класс к выбранной вкладке
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab + '-content').classList.add('active');
+                });
+            });
+        }
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Устанавливаем обработчики для полей таймингов
+            const trcdInput = document.getElementById('trcd');
+            const trpInput = document.getElementById('trp');
+            
+            function updateMinTras() {
+                calculateRecommendedTras();
+            }
+            
+            trcdInput.addEventListener('change', updateMinTras);
+            trpInput.addEventListener('change', updateMinTras);
+            
+            // Инициализируем минимальный tRAS
+            calculateRecommendedTras();
+        });
+    </script>
+</body>
+</html>
