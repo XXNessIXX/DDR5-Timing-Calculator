@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Умный калькулятор субтаймингов DDR5</title>
+    <!-- УБРАЛИ СТАТИЧЕСКУЮ ЗАГРУЗКУ БИБЛИОТЕКИ (это вызывало конфликт) -->
     <style>
         /* Адаптивность для мобильных устройств */
         @media screen and (max-width: 768px) {
@@ -561,7 +562,7 @@
                 <label for="platform" class="required">Платформа</label>
                 <select id="platform" onchange="updateMotherboardOptions()">
                     <option value="">-- Выберите платформу --</option>
-                    <option value="amd_am5">AMD AM5 (Ryzen 7000-9000 )</option>
+                    <option value="amd_am5">AMD AM5 (Ryzen 7000-9000)</option>
                     <option value="intel_lga1700">Intel LGA 1700 (12th-14th Gen)</option>
                 </select>
             </div>
@@ -1434,10 +1435,11 @@
                 // Проверяем, загружена ли html2canvas
                 if (typeof html2canvas === 'undefined') {
                     loadHtml2Canvas().then(() => {
-                        generateCertificate(true);
+                        // Добавляем небольшую задержку, чтобы убедиться, что библиотека полностью загружена
+                        setTimeout(() => generateCertificate(true), 200);
                     }).catch(error => {
                         console.error('Ошибка загрузки html2canvas:', error);
-                        alert('Произошла ошибка при подготовке изображения. Попробуйте обновить страницу.');
+                        alert('Произошла ошибка при подготовке изображения: ' + error.message + '. Попробуйте обновить страницу.');
                     });
                 } else {
                     generateCertificate(true);
@@ -1453,10 +1455,19 @@
                     return;
                 }
                 
+                console.log('Загружаем html2canvas...');
                 const script = document.createElement('script');
-                script.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js';
-                script.onload = resolve;
-                script.onerror = () => reject(new Error('Не удалось загрузить html2canvas'));
+                // Используем другой CDN (jsdelivr) с атрибутом crossorigin
+                script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+                script.crossOrigin = 'anonymous';
+                script.onload = () => {
+                    console.log('html2canvas успешно загружена');
+                    resolve();
+                };
+                script.onerror = (error) => {
+                    console.error('Ошибка загрузки html2canvas:', error);
+                    reject(new Error('Не удалось загрузить html2canvas. Код ошибки: ' + (error.code || 'N/A')));
+                };
                 document.head.appendChild(script);
             });
         }
@@ -1779,6 +1790,14 @@
                 if (download) {
                     const certificate = document.getElementById('stability-certificate');
                     
+                    // Определяем фон в зависимости от темы
+                    let backgroundColor;
+                    if (document.body.classList.contains('dark-theme')) {
+                        backgroundColor = '#121212'; // Темный фон для темной темы
+                    } else {
+                        backgroundColor = '#ffffff'; // Светлый фон для светлой темы
+                    }
+                    
                     // Добавляем временный класс для стилей при экспорте
                     certificate.classList.add('export-mode');
                     
@@ -1789,11 +1808,11 @@
                     
                     // Используем html2canvas для создания изображения
                     html2canvas(certificate, {
-                        backgroundColor: getComputedStyle(document.body).backgroundColor,
+                        backgroundColor: backgroundColor,
                         scale: 2, // Увеличиваем качество
                         useCORS: true,
                         allowTaint: true,
-                        logging: false
+                        logging: true
                     }).then(canvas => {
                         // Создаем ссылку для скачивания
                         const link = document.createElement('a');
@@ -1811,7 +1830,8 @@
                         console.error('Ошибка при генерации изображения:', error);
                         document.getElementById('download-certificate').innerHTML = originalText;
                         document.getElementById('download-certificate').disabled = false;
-                        alert('Произошла ошибка при создании изображения. Попробуйте снова или используйте скриншот.');
+                        certificate.classList.remove('export-mode');
+                        alert('Произошла ошибка при создании изображения: ' + error.message + '. Попробуйте снова или используйте скриншот.');
                     });
                 }
             }
