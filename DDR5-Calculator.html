@@ -5,58 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Умный калькулятор субтаймингов DDR5</title>
     <style>
-    /* Добавьте эти стили в раздел <style> вашего calculator.html */
-    /* Адаптивность для мобильных устройств */
-    @media screen and (max-width: 768px) {
-        body {
-            padding: 10px; /* Уменьшаем отступы */
-            font-size: 14px; /* Уменьшаем базовый шрифт */
+        /* Адаптивность для мобильных устройств */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+            .container {
+                padding: 15px;
+            }
+            .form-group label {
+                min-width: 150px;
+                font-size: 13px;
+            }
+            select, input {
+                min-width: 0;
+                width: auto;
+                font-size: 13px;
+                padding: 6px 8px;
+            }
+            button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            table {
+                font-size: 13px;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            th, td {
+                padding: 8px 10px;
+            }
+            .tabs {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .tab {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+            .chip-logo {
+                width: 16px;
+                height: 16px;
+                font-size: 0.7em;
+            }
         }
-        .container {
-            padding: 15px; /* Уменьшаем внутренние отступы контейнера */
-        }
-        .form-group label {
-            min-width: 150px; /* Уменьшаем ширину меток */
-            font-size: 13px;
-        }
-        select, input {
-            min-width: 0; /* Сбрасываем минимальную ширину */
-            width: auto;
-            font-size: 13px;
-            padding: 6px 8px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 14px;
-        }
-        table {
-            font-size: 13px; /* Уменьшаем шрифт в таблицах */
-            display: block; /* Позволяет таблице скроллиться по горизонтали */
-            overflow-x: auto;
-            white-space: nowrap; /* Предотвращает перенос слов в ячейках */
-        }
-        th, td {
-            padding: 8px 10px; /* Уменьшаем отступы в ячейках */
-        }
-        .tabs {
-            flex-direction: row; /* Оставляем вкладки в ряд, но можно и column если нужно */
-            flex-wrap: wrap; /* Позволяем вкладкам переноситься на новую строку */
-            /* Если хотите вертикальные вкладки на маленьких экранах: */
-            /* flex-direction: column; */
-        }
-        .tab {
-            padding: 8px 12px;
-            font-size: 13px;
-        }
-        /* Уменьшаем размеры логотипов чипов */
-        .chip-logo {
-            width: 16px;
-            height: 16px;
-            font-size: 0.7em;
-        }
-    }
-</style>
-    <style>
+
         /* Стили по умолчанию (светлая тема) */
         :root {
             --bg-color: #f8f9fa;
@@ -94,8 +89,19 @@
             --box-shadow: rgba(0, 0, 0, 0.08);
             --button-shadow: rgba(52, 152, 219, 0.3);
             --button-hover-shadow: rgba(52, 152, 219, 0.4);
+            
+            /* Переменные для сравнения */
+            --comparison-bg: #e8f5e9;
+            --comparison-border: #4caf50;
+            --result-bg: #e8f5e9;
+            
+            /* Переменные для сертификата */
+            --certificate-bg: #f8f9fa;
+            --certificate-border: #e0e0e0;
+            --certificate-header: #2c3e50;
+            --certificate-highlight: #e8f5e9;
         }
-
+        
         /* Темная тема */
         .dark-theme {
             --bg-color: #121212;
@@ -130,8 +136,19 @@
             --box-shadow: rgba(0, 0, 0, 0.5);
             --button-shadow: rgba(187, 134, 252, 0.3);
             --button-hover-shadow: rgba(187, 134, 252, 0.4);
+            
+            /* Переменные для сравнения в темной теме */
+            --comparison-bg: #1b5e20;
+            --comparison-border: #4caf50;
+            --result-bg: #1b5e20;
+            
+            /* Переменные для сертификата в темной теме */
+            --certificate-bg: #2d3748;
+            --certificate-border: #4a5568;
+            --certificate-header: #e2e8f0;
+            --certificate-highlight: #1a202c;
         }
-
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             max-width: 1000px;
@@ -142,6 +159,7 @@
             background-color: var(--bg-color);
             transition: background-color 0.3s, color 0.3s;
         }
+        
         .container {
             background-color: var(--container-bg);
             border-radius: 10px;
@@ -149,17 +167,20 @@
             box-shadow: 0 4px 12px var(--box-shadow);
             transition: background-color 0.3s, box-shadow 0.3s;
         }
+        
         h1 {
             color: var(--header-color);
             text-align: center;
             margin-bottom: 10px;
         }
+        
         .subtitle {
             text-align: center;
             color: var(--subtitle-color);
             margin-bottom: 25px;
             font-size: 1.1em;
         }
+        
         .form-section {
             background-color: var(--form-section-bg);
             border-radius: 8px;
@@ -167,12 +188,14 @@
             margin-bottom: 20px;
             transition: background-color 0.3s;
         }
+        
         .form-group {
             margin-bottom: 15px;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
         }
+        
         label {
             min-width: 220px;
             font-weight: 600;
@@ -181,10 +204,12 @@
             display: flex;
             align-items: center;
         }
+        
         .required::after {
             content: " *";
-            color: #e74c3c; /* Оставляем красный для обязательных полей */
+            color: #e74c3c;
         }
+        
         select, input {
             padding: 8px 10px;
             border: 1px solid var(--input-border);
@@ -194,16 +219,20 @@
             width: auto;
             transition: border-color 0.3s, background-color 0.3s;
         }
+        
         select {
             min-width: 250px;
         }
+        
         input {
             width: 120px;
         }
+        
         select:focus, input:focus {
             outline: none;
             border-color: var(--button-bg);
         }
+        
         .chip-info {
             display: flex;
             align-items: center;
@@ -211,6 +240,7 @@
             margin-top: 5px;
             font-size: 0.9em;
         }
+        
         .chip-logo {
             width: 20px;
             height: 20px;
@@ -222,9 +252,11 @@
             font-weight: bold;
             font-size: 0.8em;
         }
+        
         .samsung { background-color: var(--chip-samsung); }
         .skhynix { background-color: var(--chip-skhynix); }
         .micron { background-color: var(--chip-micron); }
+        
         button {
             background-color: var(--button-bg);
             color: white;
@@ -239,11 +271,13 @@
             font-weight: 600;
             box-shadow: 0 2px 5px var(--button-shadow);
         }
+        
         button:hover {
             background-color: var(--button-hover-bg);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px var(--button-hover-shadow);
         }
+        
         .results {
             margin-top: 20px;
             background-color: var(--container-bg);
@@ -253,33 +287,40 @@
             display: none;
             transition: background-color 0.3s, border-color 0.3s;
         }
+        
         .results.active {
             display: block;
             animation: fadeIn 0.5s;
         }
+        
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
         }
+        
         th, td {
             border: 1px solid var(--results-border);
             padding: 12px 15px;
             text-align: left;
             transition: border-color 0.3s;
         }
+        
         th {
             background-color: var(--table-header-bg);
             font-weight: 600;
             color: var(--header-color);
         }
+        
         tr:hover {
             background-color: var(--table-row-hover);
         }
+        
         .timing-category {
             background-color: var(--highlight-bg);
             font-weight: 600;
@@ -287,6 +328,7 @@
             border-top: 1px solid var(--results-border);
             border-bottom: 1px solid var(--results-border);
         }
+        
         .recommendation {
             background-color: var(--recommendation-bg);
             border-left: 4px solid var(--recommendation-border);
@@ -295,6 +337,7 @@
             border-radius: 0 4px 4px 0;
             font-size: 0.95em;
         }
+        
         .warning {
             background-color: var(--warning-bg);
             border-left: 4px solid var(--warning-border);
@@ -303,6 +346,7 @@
             border-radius: 0 4px 4px 0;
             font-size: 0.95em;
         }
+        
         .error {
             background-color: var(--error-bg);
             border-left: 4px solid var(--error-border);
@@ -311,39 +355,47 @@
             border-radius: 0 4px 4px 0;
             font-size: 0.95em;
         }
+        
         .highlight {
             background-color: var(--highlight-bg);
             padding: 2px 6px;
             border-radius: 3px;
             font-weight: 600;
         }
+        
         .note {
             font-size: 0.9em;
             color: var(--note-color);
             margin-top: 5px;
             font-style: italic;
         }
+        
         .tabs {
             display: flex;
             margin-bottom: 15px;
             border-bottom: 1px solid var(--tab-border);
         }
+        
         .tab {
             padding: 10px 15px;
             cursor: pointer;
             border-bottom: 3px solid transparent;
             transition: border-color 0.3s, font-weight 0.3s;
         }
+        
         .tab.active {
             border-bottom: 3px solid var(--tab-active-border);
             font-weight: 600;
         }
+        
         .tab-content {
             display: none;
         }
+        
         .tab-content.active {
             display: block;
         }
+        
         .preset {
             background-color: var(--preset-bg);
             border: 1px solid var(--preset-border);
@@ -353,24 +405,28 @@
             cursor: pointer;
             transition: all 0.2s;
         }
+        
         .preset:hover {
             background-color: var(--preset-hover-bg);
         }
+        
         .preset.active {
             border: 1px solid var(--preset-active-border);
             background-color: var(--preset-active-bg);
         }
+        
         .preset-title {
             font-weight: 600;
             display: flex;
             justify-content: space-between;
         }
+        
         .preset-specs {
             font-size: 0.9em;
             color: var(--note-color);
             margin-top: 3px;
         }
-
+        
         /* Стили для кнопки переключения темы */
         .theme-toggle {
             position: fixed;
@@ -391,30 +447,125 @@
             z-index: 1000;
             transition: background-color 0.3s, box-shadow 0.3s;
         }
+        
         .theme-toggle:hover {
             background-color: var(--button-hover-bg);
             box-shadow: 0 4px 8px var(--button-hover-shadow);
+        }
+        
+        /* ===== СТИЛИ ДЛЯ РЕЖИМА СРАВНЕНИЯ ===== */
+        .comparison-section {
+            margin: 15px 0;
+            padding: 15px;
+            background: var(--comparison-bg);
+            border-radius: 6px;
+            border-left: 4px solid var(--comparison-border);
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .comparison-result {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 600;
+            padding: 10px;
+            border-radius: 4px;
+            background: var(--result-bg);
+        }
+        
+        /* ===== СТИЛИ ДЛЯ СЕРТИФИКАТА СТАБИЛЬНОСТИ ===== */
+        #stability-certificate {
+            margin-top: 25px;
+            padding: 20px;
+            background: var(--certificate-bg);
+            border-radius: 6px;
+            border: 1px solid var(--certificate-border);
+        }
+        
+        #stability-certificate h3 {
+            color: var(--certificate-header);
+            margin-top: 0;
+        }
+        
+        #stability-certificate .highlight-bg {
+            background: var(--certificate-highlight);
+            padding: 10px;
+            border-radius: 4px;
+            min-width: 180px;
+        }
+        
+        /* Специальные стили для экспорта в изображение */
+        .export-mode {
+            filter: none !important;
+            -webkit-filter: none !important;
+        }
+        
+        .export-mode * {
+            -webkit-text-stroke: 0 !important;
+            text-shadow: none !important;
+            box-shadow: none !important;
         }
     </style>
 </head>
 <body>
     <!-- Кнопка переключения темы -->
     <button class="theme-toggle" onclick="toggleTheme()" title="Переключить тему">🌙</button>
-
+    
+    <!-- ===== ЗВЁЗДНЫЙ БАР В ХЕДЕРЕЕ ===== -->
+    <div id="star-bar" style="position: sticky; top: 0; z-index: 1000; 
+                background: var(--bar-bg, #fff); 
+                color: var(--bar-text, #333);
+                border-bottom: 1px solid var(--bar-border, #e0e0e0);
+                padding: 8px 15px;
+                transition: all 0.3s ease;
+                opacity: 0;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+      <div style="max-width: 1000px; margin: 0 auto; display: flex; 
+                  align-items: center; justify-content: space-between;
+                  flex-wrap: wrap; gap: 10px;">
+        
+        <div style="display: flex; align-items: center; gap: 8px; flex: 1 1 300px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16" style="color: #e9669e;">
+            <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.656 1.893 1.614-4.675a.5.5 0 0 0-.401-.585l-4.492-1.497 4.492-1.497a.5.5 0 0 0 .216-.865l-1.614-4.675 3.656 1.893a.5.5 0 0 0 .497 0l3.656-1.893-1.614 4.675a.5.5 0 0 0 .216.865l4.492 1.497-4.492 1.497a.5.5 0 0 0-.401.585l1.614 4.675-3.656-1.893a.5.5 0 0 0-.497 0z"/>
+          </svg>
+          <span>🔥 <strong id="star-counter">37</strong> человек улучшили разгон этим калькулятором</span>
+        </div>
+        
+        <a href="https://github.com/XXNessIXX/DDR5-Timing-Calculator/stargazers" 
+           target="_blank" 
+           style="background: var(--star-btn-bg, #2ea44f); color: white; padding: 6px 15px; 
+                  border-radius: 20px; text-decoration: none; font-weight: 600; 
+                  display: inline-flex; align-items: center; gap: 5px; 
+                  transition: all 0.2s; box-shadow: 0 2px 4px var(--star-btn-shadow, rgba(46, 164, 79, 0.3));">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 4px;">
+            <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.656 1.893 1.614-4.675a.5.5 0 0 0-.401-.585l-4.492-1.497 4.492-1.497a.5.5 0 0 0 .216-.865l-1.614-4.675 3.656 1.893a.5.5 0 0 0 .497 0l3.656-1.893-1.614 4.675a.5.5 0 0 0 .216.865l4.492 1.497-4.492 1.497a.5.5 0 0 0-.401.585l1.614 4.675-3.656-1.893a.5.5 0 0 0-.497 0z"/>
+          </svg>
+          Поставить звезду на GitHub
+        </a>
+      </div>
+    </div>
+    
     <div class="container">
         <h1>Умный калькулятор субтаймингов DDR5</h1>
         <p class="subtitle">Выберите ваше оборудование для получения точных рекомендаций</p><br>
         <p class="subtitle">Внимание, характер расчётов приблизительный!</p>
+        
         <div class="form-section">
             <h2>Выбор оборудования</h2>
+            
             <div class="form-group">
                 <label for="platform" class="required">Платформа</label>
                 <select id="platform" onchange="updateMotherboardOptions()">
                     <option value="">-- Выберите платформу --</option>
-                    <option value="amd_am5">AMD AM5 (Ryzen 7000, 8000, 9000)</option>
+                    <option value="amd_am5">AMD AM5 (Ryzen 7000-9000 )</option>
                     <option value="intel_lga1700">Intel LGA 1700 (12th-14th Gen)</option>
                 </select>
             </div>
+            
             <div class="form-group">
                 <label for="motherboard" class="required">Материнская плата</label>
                 <select id="motherboard" onchange="updateMotherboardInfo()">
@@ -424,6 +575,7 @@
                     <!-- Информация о материнской плате будет отображаться здесь -->
                 </div>
             </div>
+            
             <div class="form-group">
                 <label for="ram-brand" class="required">Бренд ОЗУ</label>
                 <select id="ram-brand" onchange="updateRamModels()">
@@ -434,6 +586,7 @@
                     <option value="crucial">Crucial</option>
                 </select>
             </div>
+            
             <div class="form-group">
                 <label for="ram-model" class="required">Модель ОЗУ</label>
                 <select id="ram-model" onchange="updateRamInfo()">
@@ -443,6 +596,7 @@
                     <!-- Информация о модуле ОЗУ будет отображаться здесь -->
                 </div>
             </div>
+            
             <div class="form-group">
                 <label for="chip-type" class="required">Тип чипов</label>
                 <select id="chip-type" onchange="updateChipInfo()">
@@ -461,6 +615,7 @@
                     <span id="chip-description"></span>
                 </div>
             </div>
+            
             <div class="form-group">
                 <label for="aggressiveness">Уровень агрессивности</label>
                 <select id="aggressiveness">
@@ -470,12 +625,15 @@
                 </select>
             </div>
         </div>
+        
         <div class="form-section">
             <h2>Основные параметры</h2>
+            
             <div class="form-group">
                 <label for="frequency" class="required">Целевая частота (МТ/с)</label>
                 <input type="number" id="frequency" placeholder="Например: 6000" min="3200" value="6000" onchange="updateMinCL()">
             </div>
+            
             <div class="form-group">
                 <label for="cl" class="required">CAS Latency (CL)</label>
                 <div style="display: flex; align-items: center;">
@@ -483,14 +641,17 @@
                     <span style="margin-left: 10px; color: #777;">Мин. рекомендуемое: <span id="min-cl">30</span></span>
                 </div>
             </div>
+            
             <div class="form-group">
                 <label for="trcd" class="required">tRCD</label>
                 <input type="number" id="trcd" placeholder="Например: 38" min="30" value="38">
             </div>
+            
             <div class="form-group">
                 <label for="trp" class="required">tRP</label>
                 <input type="number" id="trp" placeholder="Например: 38" min="30" value="38">
             </div>
+            
             <div class="form-group">
                 <label for="tras" class="required">tRAS</label>
                 <div style="display: flex; align-items: center;">
@@ -498,28 +659,63 @@
                     <span style="margin-left: 10px; color: #777;">Мин. рекомендуемое: <span id="min-tras">56</span></span>
                 </div>
             </div>
+            
             <div class="form-group">
                 <label for="vdd">Напряжение DRAM (В)</label>
                 <input type="number" id="vdd" placeholder="Например: 1.35" min="1.1" max="1.5" step="0.01" value="1.35">
             </div>
         </div>
+        
         <button onclick="calculateSubtimings()">Рассчитать субтайминги</button>
+        
         <div class="results" id="results">
             <h2>Рекомендуемые субтайминги</h2>
             <p id="platform-description">Рассчитано для вашей конфигурации</p>
+            
+            <!-- ===== РЕЖИМ СРАВНЕНИЯ С XMP ===== -->
+            <div class="comparison-section">
+              <h3>🚀 Сравнение с заводским XMP/EXPO профилем:</h3>
+              
+              <div style="display: flex; gap: 20px; margin-top: 10px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 250px;">
+                  <strong>Ваша конфигурация</strong>
+                  <div id="user-config" style="margin-top: 8px; line-height: 1.6;">
+                    <div>CL<span id="user-cl">-</span> (<span id="user-ns">-</span> нс)</div>
+                    <div>tRCD/tRP: <span id="user-trcd">-</span>/<span id="user-trp">-</span> (<span id="user-trcd-ns">-</span>/<span id="user-trp-ns">-</span> нс)</div>
+                  </div>
+                </div>
+                
+                <div style="flex: 1; min-width: 250px;">
+                  <strong>XMP/EXPO профиль</strong>
+                  <div id="xmp-config" style="margin-top: 8px; line-height: 1.6;">
+                    <div>CL<span id="xmp-cl">36</span> (<span id="xmp-ns">12.00</span> нс)</div>
+                    <div>tRCD/tRP: <span id="xmp-trcd">38</span>/<span id="xmp-trp">38</span> (<span id="xmp-trcd-ns">12.67</span>/<span id="xmp-trp-ns">12.67</span> нс)</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="comparison-result" id="comparison-result">
+                🚀 Вы улучшили задержку на 0.0 нс (0.0%)
+              </div>
+            </div>
+            <!-- ===== КОНЕЦ РЕЖИМА СРАВНЕНИЯ ===== -->
+            
             <div id="stability-warning" class="warning" style="display: none;">
                 <h3>Предупреждение о стабильности:</h3>
                 <p id="stability-message"></p>
             </div>
+            
             <div id="stability-error" class="error" style="display: none;">
                 <h3>Критическая проблема со стабильностью:</h3>
                 <p id="stability-error-message"></p>
             </div>
+            
             <div class="tabs">
                 <div class="tab active" data-tab="primary">Основные</div>
                 <div class="tab" data-tab="secondary">Вторичные</div>
                 <div class="tab" data-tab="tertiary">Третичные</div>
             </div>
+            
             <div class="tab-content active" id="primary-content">
                 <table>
                     <tr>
@@ -549,6 +745,7 @@
                     </tr>
                 </table>
             </div>
+            
             <div class="tab-content" id="secondary-content">
                 <table>
                     <tr>
@@ -598,6 +795,7 @@
                     </tr>
                 </table>
             </div>
+            
             <div class="tab-content" id="tertiary-content">
                 <table>
                     <tr>
@@ -643,6 +841,7 @@
                 </table>
             </div>
         </div>
+        
         <div class="recommendation" id="voltage-recommendations" style="display: none;">
             <h3>Рекомендуемые напряжения для стабильности:</h3>
             <table>
@@ -673,20 +872,58 @@
                 </tr>
             </table>
         </div>
+        
+        <!-- ===== СЕРТИФИКАТ СТАБИЛЬНОСТИ ===== -->
+        <div id="stability-certificate" style="display: none;">
+          <h3>✅ Сертификат стабильности DDR5</h3>
+          <p style="margin: 15px 0; line-height: 1.6;">
+            <strong>Конфигурация:</strong> DDR5-<span id="cert-frequency">6000</span> 
+            <span id="cert-timings">30-38-38-50</span> | 
+            <span id="cert-chip">SK hynix A-die</span> | 
+            <span id="cert-mb">Gigabyte B650</span>
+          </p>
+          
+          <div style="display: flex; gap: 15px; flex-wrap: wrap; margin: 15px 0;">
+            <div class="highlight-bg" style="padding: 10px; border-radius: 4px;">
+              <div style="font-size: 0.9em; color: var(--note-color);">Реальная задержка</div>
+              <div style="font-size: 1.2em; font-weight: 600;" id="cert-ns">10.00 нс</div>
+            </div>
+            
+            <div class="highlight-bg" style="padding: 10px; border-radius: 4px;">
+              <div style="font-size: 0.9em; color: var(--note-color);">Улучшение против XMP</div>
+              <div style="font-size: 1.2em; font-weight: 600;" id="cert-improvement">+2.00 нс</div>
+            </div>
+          </div>
+          
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
+            <button id="download-certificate" class="btn" style="background: #673ab7; flex: 1; min-width: 180px;">
+              🖼️ Скачать как изображение
+            </button>
+            
+            <a href="#" id="reddit-share" class="btn" style="background: #ff4500; flex: 1; min-width: 180px;">
+              🐶 Поделиться в r/overclocking
+            </a>
+          </div>
+        </div>
+        <!-- ===== КОНЕЦ СЕРТИФИКАТА ===== -->
+        
         <div class="warning">
             <h3>Примеры популярных конфигураций:</h3>
+            
             <div class="preset" onclick="loadPreset('amd_kingston_adie')">
                 <div class="preset-title">AMD AM5 + Kingston FURY Beast + SK hynix A-die
                     <span class="highlight">6000 МТ/с 30-38-38-50</span>
                 </div>
                 <div class="preset-specs">Gigabyte B650 AORUS Elite AX V2 | H5CG48AEBDX018 | 2024</div>
             </div>
+            
             <div class="preset" onclick="loadPreset('intel_gskill_bdie')">
                 <div class="preset-title">Intel 13th Gen + G.Skill Trident Z5 + Samsung B-die
                     <span class="highlight">6000 МТ/с 30-36-36-76</span>
                 </div>
-                <div class="preset-specs">ASUS ROG Maximus Z790 Hero | HX48C15PB4K2 | 2022</div>
+                <div class="preset-specs">ASUS ROG Strix Z790 Hero | HX48C15PB4K2 | 2022</div>
             </div>
+            
             <div class="preset" onclick="loadPreset('amd_corsair_mdie')">
                 <div class="preset-title">AMD AM5 + Corsair Vengeance + SK hynix M-die
                     <span class="highlight">6000 МТ/с 32-38-38-76</span>
@@ -695,6 +932,7 @@
             </div>
         </div>
     </div>
+    
     <script>
         // База данных материнских плат
         const motherboards = {
@@ -711,6 +949,7 @@
                 {id: 'asrock_z790_toygaming', name: 'ASRock Z790 Taichi OC Formula', chipset: 'Z790', description: 'Специализированная плата для разгона'}
             ]
         };
+        
         // База данных модулей ОЗУ
         const ramModels = {
             kingston: [
@@ -730,6 +969,7 @@
                 {id: 'crucial_pro_5600', name: 'Crucial Pro DDR5 P325660G60C3610B', speed: '5600', timings: '36-36-36-76', description: 'Профессиональная серия с хорошей стабильностью'}
             ]
         };
+        
         // База данных рекомендаций по чипам
         const chipRecommendations = {
             samsung_bdie: {
@@ -743,7 +983,7 @@
                 tccd_s: {conservative: 4, balanced: 4, aggressive: 3},
                 tccd_l: {conservative: 5, balanced: 5, aggressive: 4},
                 trfc: {conservative: 260, balanced: 280, aggressive: 300},
-                minCL: { 5600: 28, 6000: 30, 6400: 32, 6800: 34, 7200: 36 } // Примерные минимальные CL
+                minCL: { 5600: 28, 6000: 30, 6400: 32, 6800: 34, 7200: 36 }
             },
             samsung_cdie: {
                 name: "Samsung C-die",
@@ -834,9 +1074,10 @@
                 tccd_s: {conservative: 4, balanced: 5, aggressive: 5},
                 tccd_l: {conservative: 5, balanced: 6, aggressive: 6},
                 trfc: {conservative: 300, balanced: 310, aggressive: 320},
-                minCL: { 5600: 30, 6000: 32, 6400: 34, 6800: 36, 7200: 38 } // Средние значения
+                minCL: { 5600: 30, 6000: 32, 6400: 34, 6800: 36, 7200: 38 }
             }
         };
+        
         // База данных рекомендаций для материнских плат
         const motherboardRecommendations = {
             gigabyte_b650_aorus_elite: {
@@ -888,12 +1129,15 @@
                 gearDown: {conservative: "N/A", balanced: "N/A", aggressive: "N/A"}
             }
         };
+        
         // Функция для обновления списка материнских плат
         function updateMotherboardOptions() {
             const platform = document.getElementById('platform').value;
             const motherboardSelect = document.getElementById('motherboard');
+            
             // Очищаем текущий список
             motherboardSelect.innerHTML = '<option value="">-- Выберите материнскую плату --</option>';
+            
             if (platform && motherboards[platform]) {
                 motherboards[platform].forEach(mb => {
                     const option = document.createElement('option');
@@ -903,16 +1147,20 @@
                 });
             }
         }
+        
         // Функция для отображения информации о материнской плате
         function updateMotherboardInfo() {
             const mbId = document.getElementById('motherboard').value;
             const infoDiv = document.getElementById('motherboard-info');
+            
             if (!mbId) {
                 infoDiv.style.display = 'none';
                 return;
             }
+            
             const platform = document.getElementById('platform').value;
             const mb = motherboards[platform].find(m => m.id === mbId);
+            
             if (mb) {
                 infoDiv.innerHTML = `<strong>${mb.name}:</strong> ${mb.description}`;
                 infoDiv.style.display = 'block';
@@ -920,12 +1168,15 @@
                 infoDiv.style.display = 'none';
             }
         }
+        
         // Функция для обновления списка моделей ОЗУ
         function updateRamModels() {
             const brand = document.getElementById('ram-brand').value;
             const ramModelSelect = document.getElementById('ram-model');
+            
             // Очищаем текущий список
             ramModelSelect.innerHTML = '<option value="">-- Выберите модель ОЗУ --</option>';
+            
             if (brand && ramModels[brand]) {
                 ramModels[brand].forEach(ram => {
                     const option = document.createElement('option');
@@ -935,16 +1186,20 @@
                 });
             }
         }
+        
         // Функция для отображения информации о модуле ОЗУ
         function updateRamInfo() {
             const brand = document.getElementById('ram-brand').value;
             const modelId = document.getElementById('ram-model').value;
             const infoDiv = document.getElementById('ram-info');
+            
             if (!brand || !modelId) {
                 infoDiv.style.display = 'none';
                 return;
             }
+            
             const ram = ramModels[brand].find(r => r.id === modelId);
+            
             if (ram) {
                 infoDiv.innerHTML = `<strong>${ram.name}:</strong> ${ram.description}`;
                 infoDiv.style.display = 'block';
@@ -952,17 +1207,21 @@
                 infoDiv.style.display = 'none';
             }
         }
+        
         // Функция для отображения информации о чипах
         function updateChipInfo() {
             const chipType = document.getElementById('chip-type').value;
             const chipInfoDiv = document.getElementById('chip-info');
             const chipLogo = document.getElementById('chip-logo');
             const chipDesc = document.getElementById('chip-description');
+            
             if (!chipType || chipType === 'custom') {
                 chipInfoDiv.style.display = 'none';
                 return;
             }
+            
             const chip = chipRecommendations[chipType];
+            
             if (chip) {
                 // Устанавливаем цвет логотипа в зависимости от производителя
                 if (chipType.includes('samsung')) {
@@ -975,28 +1234,35 @@
                     chipLogo.className = 'chip-logo micron';
                     chipLogo.textContent = 'M';
                 }
+                
                 chipDesc.textContent = chip.description;
                 chipInfoDiv.style.display = 'flex';
             } else {
                 chipInfoDiv.style.display = 'none';
             }
+            
             // Обновляем минимальный CL при смене чипа
             updateMinCL();
         }
+        
         // Функция для автоматического расчёта рекомендуемого tRAS
         function calculateRecommendedTras() {
             const trcd = parseFloat(document.getElementById('trcd').value) || 38;
             const trp = parseFloat(document.getElementById('trp').value) || 38;
+            
             // Рекомендуемое значение tRAS = tRCD + tRP - 10
             const recommendedTras = trcd + trp - 10;
+            
             // Обновляем минимально рекомендуемое значение
             document.getElementById('min-tras').textContent = recommendedTras;
         }
+        
         // Функция для автоматического расчёта минимального CL
         function updateMinCL() {
             const frequency = parseFloat(document.getElementById('frequency').value) || 6000;
             const chipType = document.getElementById('chip-type').value;
             const minClSpan = document.getElementById('min-cl');
+            
             if (chipType && chipRecommendations[chipType]) {
                 const chipRec = chipRecommendations[chipType];
                 // Найти ближайшую частоту в таблице minCL
@@ -1015,6 +1281,7 @@
                 minClSpan.textContent = "30"; // Значение по умолчанию
             }
         }
+        
         // Загрузка примеров конфигураций
         function loadPreset(presetId) {
             switch(presetId) {
@@ -1024,13 +1291,16 @@
                     setTimeout(() => {
                         document.getElementById('motherboard').value = 'gigabyte_b650_aorus_elite';
                         updateMotherboardInfo();
+                        
                         document.getElementById('ram-brand').value = 'kingston';
                         updateRamModels();
                         setTimeout(() => {
                             document.getElementById('ram-model').value = 'kingston_fury_beast_6000';
                             updateRamInfo();
+                            
                             document.getElementById('chip-type').value = 'skhynix_adie';
                             updateChipInfo();
+                            
                             document.getElementById('frequency').value = '6000';
                             document.getElementById('cl').value = '30';
                             document.getElementById('trcd').value = '38';
@@ -1042,19 +1312,23 @@
                         }, 100);
                     }, 100);
                     break;
+                    
                 case 'intel_gskill_bdie':
                     document.getElementById('platform').value = 'intel_lga1700';
                     updateMotherboardOptions();
                     setTimeout(() => {
                         document.getElementById('motherboard').value = 'asus_rog_strix_z790';
                         updateMotherboardInfo();
+                        
                         document.getElementById('ram-brand').value = 'gskill';
                         updateRamModels();
                         setTimeout(() => {
                             document.getElementById('ram-model').value = 'gskill_trident_z5_6000';
                             updateRamInfo();
+                            
                             document.getElementById('chip-type').value = 'samsung_bdie';
                             updateChipInfo();
+                            
                             document.getElementById('frequency').value = '6000';
                             document.getElementById('cl').value = '30';
                             document.getElementById('trcd').value = '36';
@@ -1066,19 +1340,23 @@
                         }, 100);
                     }, 100);
                     break;
+                    
                 case 'amd_corsair_mdie':
                     document.getElementById('platform').value = 'amd_am5';
                     updateMotherboardOptions();
                     setTimeout(() => {
                         document.getElementById('motherboard').value = 'msi_pro_x670_p';
                         updateMotherboardInfo();
+                        
                         document.getElementById('ram-brand').value = 'corsair';
                         updateRamModels();
                         setTimeout(() => {
                             document.getElementById('ram-model').value = 'corsair_vengeance_6000';
                             updateRamInfo();
+                            
                             document.getElementById('chip-type').value = 'skhynix_mdie';
                             updateChipInfo();
+                            
                             document.getElementById('frequency').value = '6000';
                             document.getElementById('cl').value = '32';
                             document.getElementById('trcd').value = '38';
@@ -1092,6 +1370,7 @@
                     break;
             }
         }
+        
         // Функция для переключения темы
         function toggleTheme() {
             const body = document.body;
@@ -1102,9 +1381,10 @@
             // Меняем иконку кнопки
             document.querySelector('.theme-toggle').textContent = isDark ? '☀️' : '🌙';
         }
+        
         // Инициализация темы при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
-             // Проверяем сохраненную тему
+            // Проверяем сохраненную тему
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.body.classList.add('dark-theme');
@@ -1112,19 +1392,75 @@
             } else {
                 document.querySelector('.theme-toggle').textContent = '🌙';
             }
+            
             // Устанавливаем обработчики для полей таймингов
             const trcdInput = document.getElementById('trcd');
             const trpInput = document.getElementById('trp');
             const frequencyInput = document.getElementById('frequency');
+            
             function updateMinTras() {
                 calculateRecommendedTras();
             }
+            
             trcdInput.addEventListener('change', updateMinTras);
             trpInput.addEventListener('change', updateMinTras);
+            
             // Инициализируем минимальный tRAS и CL
             calculateRecommendedTras();
             updateMinCL();
+            
+            // Инициализируем обработчик кнопки "Скачать как изображение"
+            setupDownloadButton();
         });
+        
+        // Функция для инициализации кнопки скачивания
+        function setupDownloadButton() {
+            // Проверяем, существует ли элемент
+            const downloadBtn = document.getElementById('download-certificate');
+            if (!downloadBtn) return;
+            
+            // Удаляем предыдущие обработчики (на случай повторной инициализации)
+            const newBtn = downloadBtn.cloneNode(true);
+            downloadBtn.parentNode.replaceChild(newBtn, downloadBtn);
+            
+            // Добавляем новый обработчик
+            newBtn.addEventListener('click', function() {
+                const certificate = document.getElementById('stability-certificate');
+                if (!certificate || certificate.style.display === 'none') {
+                    alert('Сначала рассчитайте тайминги, чтобы сгенерировать сертификат!');
+                    return;
+                }
+                
+                // Проверяем, загружена ли html2canvas
+                if (typeof html2canvas === 'undefined') {
+                    loadHtml2Canvas().then(() => {
+                        generateCertificate(true);
+                    }).catch(error => {
+                        console.error('Ошибка загрузки html2canvas:', error);
+                        alert('Произошла ошибка при подготовке изображения. Попробуйте обновить страницу.');
+                    });
+                } else {
+                    generateCertificate(true);
+                }
+            });
+        }
+        
+        // Функция для динамической загрузки html2canvas
+        function loadHtml2Canvas() {
+            return new Promise((resolve, reject) => {
+                if (typeof html2canvas !== 'undefined') {
+                    resolve();
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js';
+                script.onload = resolve;
+                script.onerror = () => reject(new Error('Не удалось загрузить html2canvas'));
+                document.head.appendChild(script);
+            });
+        }
+        
         function calculateSubtimings() {
             // Получаем выбранные параметры
             const platform = document.getElementById('platform').value;
@@ -1133,11 +1469,13 @@
             const ramModel = document.getElementById('ram-model').value;
             const chipType = document.getElementById('chip-type').value;
             const aggressiveness = document.getElementById('aggressiveness').value;
+            
             // Проверка обязательных полей
             if (!platform || !motherboard || !ramBrand || !ramModel || !chipType) {
                 alert('Пожалуйста, заполните все обязательные поля выбора оборудования');
                 return;
             }
+            
             // Получаем основные параметры
             const frequency = parseFloat(document.getElementById('frequency').value);
             const cl = parseFloat(document.getElementById('cl').value);
@@ -1145,20 +1483,23 @@
             const trp = parseFloat(document.getElementById('trp').value);
             const tras = parseFloat(document.getElementById('tras').value);
             const vdd = parseFloat(document.getElementById('vdd').value) || 1.35;
+            
             // Проверка основных параметров
             if (isNaN(frequency) || frequency < 3200) {
                 alert('Пожалуйста, введите корректную частоту DDR5 (минимум 3200 МТ/с)');
                 return;
             }
+            
             if (isNaN(cl) || cl < 26 || isNaN(trcd) || trcd < 30 || 
                 isNaN(trp) || trp < 30 || isNaN(tras) || tras < 40) {
                 alert('Пожалуйста, проверьте значения основных таймингов');
                 return;
             }
+            
             // Рассчитываем минимально рекомендуемый tRAS
             const minRecommendedTras = trcd + trp - 10;
             document.getElementById('min-tras').textContent = minRecommendedTras;
-
+            
             // Проверка минимального CL
             const minClSpan = document.getElementById('min-cl');
             const minCL = parseInt(minClSpan.textContent) || 30;
@@ -1166,21 +1507,25 @@
                  alert(`CAS Latency (CL) ${cl} ниже минимально рекомендуемого (${minCL}) для выбранной частоты и типа чипов. Это может быть невозможно.`);
                  // Не останавливаем расчет, но предупреждаем
             }
-
+            
             // Показываем результаты
             document.getElementById('results').classList.add('active');
             document.getElementById('voltage-recommendations').style.display = 'block';
+            
             // Получаем рекомендации для выбранных чипов
             const chipRec = chipRecommendations[chipType];
             const mbRec = motherboardRecommendations[motherboard];
+            
             // Проверка стабильности
             const stabilityWarning = document.getElementById('stability-warning');
             const stabilityError = document.getElementById('stability-error');
             const stabilityMessage = document.getElementById('stability-message');
             const stabilityErrorMessage = document.getElementById('stability-error-message');
+            
             // Сброс предыдущих сообщений
             stabilityWarning.style.display = 'none';
             stabilityError.style.display = 'none';
+            
             // Проверка критических условий
             if (tras < minRecommendedTras) {
                 const diff = minRecommendedTras - tras;
@@ -1203,17 +1548,21 @@
                     `Это повышает шансы на стабильную работу с выбранными таймингами.`;
                 stabilityWarning.style.display = 'block';
             }
+            
             // Рассчитываем tRC
             const trc = tras + trp - 10;
+            
             // Формируем описание платформы
             let platformDesc = "Рассчитано для вашей конфигурации: ";
             platformDesc += document.querySelector(`#motherboard option[value="${motherboard}"]`).textContent + ", ";
             platformDesc += document.querySelector(`#ram-model option[value="${ramModel}"]`).textContent + ", ";
             platformDesc += chipRec.name;
             document.getElementById('platform-description').textContent = platformDesc;
+            
             // Расчет tWR с учетом CL и CWL
             const cwl = Math.max(20, Math.floor((frequency / 200) * 0.75)); // Примерный CWL
             const twrCalculated = Math.max(32, Math.ceil((cl + cwl + 10) / 6) * 6); // Округляем до кратного 6
+            
             // Расчет Gear Down Mode
             let gearDownMode;
             if (frequency > 6800) {
@@ -1221,6 +1570,7 @@
             } else {
                 gearDownMode = "Disabled (для производительности)";
             }
+            
             // Расчет CMD Rate
             let cmdRate;
             if (frequency > 7000) {
@@ -1228,6 +1578,7 @@
             } else {
                 cmdRate = "1T (оптимально)";
             }
+            
             // Заполняем значения на основе рекомендаций для чипов
             document.getElementById('trc-value').textContent = Math.round(trc);
             document.getElementById('trfc-value').textContent = chipRec.trfc[aggressiveness];
@@ -1248,45 +1599,65 @@
             document.getElementById('procodt-value').textContent = mbRec.procodt[aggressiveness];
             document.getElementById('gear-down-value').textContent = gearDownMode;
             document.getElementById('cmd-rate-value').textContent = cmdRate;
+            
             // Заполняем рекомендации
             document.getElementById('trc-recommendation').textContent = 
                 `tRAS + tRP - 10 = ${tras} + ${trp} - 10 = ${Math.round(trc)}`;
+            
             document.getElementById('trfc-recommendation').textContent = 
                 `Для ${chipRec.name}: ${chipRec.trfc[aggressiveness]} (увеличьте при нестабильности)`;
+            
             document.getElementById('trfc2-recommendation').textContent = 
                 `tRFC × 0.57 = ${chipRec.trfc[aggressiveness]} × 0.57 ≈ ${Math.round(chipRec.trfc[aggressiveness] * 0.57)}`;
+            
             document.getElementById('trfcsb-recommendation').textContent = 
                 `tRFC × 0.43 = ${chipRec.trfc[aggressiveness]} × 0.43 ≈ ${Math.round(chipRec.trfc[aggressiveness] * 0.43)}`;
+            
             document.getElementById('trrd_s-recommendation').textContent = 
                 `Для ${aggressiveness} настроек: ${chipRec.trrd_s[aggressiveness]} (${chipRec.name})`;
+            
             document.getElementById('trrd_l-recommendation').textContent = 
                 `Для ${aggressiveness} настроек: ${chipRec.trrd_l[aggressiveness]} (${chipRec.name})`;
+            
             document.getElementById('tfaw-recommendation').textContent = 
                 `Критично для стабильности: ${chipRec.tfaw[aggressiveness]} (уменьшение улучшает производительность)`;
+            
             document.getElementById('twtr_s-recommendation').textContent = 
                 `Для ${aggressiveness} настроек: ${chipRec.trrd_s[aggressiveness]} (${chipRec.name})`;
+            
             document.getElementById('twtr_l-recommendation').textContent = 
                 `Для ${aggressiveness} настроек: ${chipRec.trrd_l[aggressiveness]} (${chipRec.name})`;
+            
             document.getElementById('trtp-recommendation').textContent = 
                 `CL - 2 = ${cl} - 2 = ${Math.max(8, cl - 2)} (минимум 8)`;
+            
             document.getElementById('tccd_s-recommendation').textContent = 
                 `Для ${aggressiveness} настроек: ${chipRec.tccd_s[aggressiveness]} (${chipRec.name})`;
+            
             document.getElementById('tccd_l-recommendation').textContent = 
                 `Для ${aggressiveness} настроек: ${chipRec.tccd_l[aggressiveness]} (${chipRec.name})`;
+            
             document.getElementById('trefi-recommendation').textContent = 
                 `Максимальное значение: 9900 (выше = лучше)`;
+            
             document.getElementById('tcke-recommendation').textContent = 
                 `Минимальное значение для DDR5: 3`;
+            
             document.getElementById('txp-recommendation').textContent = 
                 `Оптимально для ${frequency} МТ/с: ${frequency >= 6000 ? '6' : '5'}`;
+            
             document.getElementById('twr-recommendation').textContent = 
                 `Рассчитано: CL + CWL + 10 = ${cl} + ${cwl} + 10 = ${cl + cwl + 10}, округлено до кратного 6: ${twrCalculated}`;
+            
             document.getElementById('procodt-recommendation').textContent = 
                 `Рекомендуется: ${mbRec.procodt[aggressiveness]} (настройка зависит от материнской платы)`;
+            
             document.getElementById('gear-down-recommendation').textContent = 
                 `Для частот > 6800 МТ/с рекомендуется включить [[8]]. Ниже 6800 МТ/с рекомендуется отключить для производительности [[11]].`;
+            
             document.getElementById('cmd-rate-recommendation').textContent = 
                 `Оптимально: 1T. Для частот > 7000 МТ/с может потребоваться 2T для стабильности [[15]].`;
+            
             // Проверка диапазонов и вывод предупреждений
             let rangeWarnings = [];
             const trrd_s_val = chipRec.trrd_s[aggressiveness];
@@ -1294,7 +1665,7 @@
             const tfaw_val = chipRec.tfaw[aggressiveness];
             const tccd_s_val = chipRec.tccd_s[aggressiveness];
             const tccd_l_val = chipRec.tccd_l[aggressiveness];
-
+            
             if (trrd_s_val < 3) {
                 rangeWarnings.push(`tRRD_S (${trrd_s_val}) ниже типичного минимума (3).`);
             }
@@ -1310,14 +1681,147 @@
             if (tccd_l_val < 4) {
                 rangeWarnings.push(`tCCD_L (${tccd_l_val}) ниже типичного минимума (4).`);
             }
+            
             if (rangeWarnings.length > 0) {
                 const existingWarning = stabilityWarning.style.display === 'block' ? stabilityMessage.textContent : '';
                 const separator = existingWarning ? ' ' : '';
                 stabilityMessage.textContent = existingWarning + separator + 'Дополнительные предупреждения: ' + rangeWarnings.join(' ');
                 stabilityWarning.style.display = 'block';
             }
+            
+            // ===== ДОБАВЛЯЕМ СРАВНЕНИЕ С XMP =====
+            function updateComparison() {
+                const cl = parseFloat(document.getElementById('cl').value);
+                const trcd = parseFloat(document.getElementById('trcd').value);
+                const trp = parseFloat(document.getElementById('trp').value);
+                const frequency = parseFloat(document.getElementById('frequency').value);
+                
+                // XMP значения для DDR5-6000 (стандартные)
+                const xmpCl = 36;
+                const xmpTrcd = 38;
+                const xmpTrp = 38;
+                
+                // Расчёт наносекунд
+                const userNs = (cl * 2000 / frequency).toFixed(2);
+                const userTrcdNs = (trcd * 2000 / frequency).toFixed(2);
+                const userTrpNs = (trp * 2000 / frequency).toFixed(2);
+                
+                const xmpNs = (xmpCl * 2000 / frequency).toFixed(2);
+                const xmpTrcdNs = (xmpTrcd * 2000 / frequency).toFixed(2);
+                const xmpTrpNs = (xmpTrp * 2000 / frequency).toFixed(2);
+                
+                // Обновляем отображение
+                document.getElementById('user-cl').textContent = cl;
+                document.getElementById('user-ns').textContent = userNs;
+                document.getElementById('user-trcd').textContent = trcd;
+                document.getElementById('user-trp').textContent = trp;
+                document.getElementById('user-trcd-ns').textContent = userTrcdNs;
+                document.getElementById('user-trp-ns').textContent = userTrpNs;
+                
+                // Расчёт улучшения
+                const nsImprovement = (xmpNs - userNs).toFixed(2);
+                const percentImprovement = ((xmpNs - userNs) / xmpNs * 100).toFixed(1);
+                
+                // Цветовая индикация
+                const resultDiv = document.getElementById('comparison-result');
+                if (nsImprovement > 0.5) {
+                    resultDiv.style.background = 'var(--result-bg)';
+                    resultDiv.textContent = `🚀 Вы улучшили задержку на ${nsImprovement} нс (${percentImprovement}%)`;
+                } else if (nsImprovement > 0) {
+                    resultDiv.style.background = 'var(--result-bg)';
+                    resultDiv.textContent = `✅ Ваша задержка на ${nsImprovement} нс лучше XMP`;
+                } else {
+                    resultDiv.style.background = '#ffebee';
+                    resultDiv.textContent = `⚠️ Ваша задержка на ${Math.abs(nsImprovement)} нс хуже XMP`;
+                }
+            }
+            
+            // Запускаем при каждом расчёте
+            updateComparison();
+            
+            // ===== ГЕНЕРАЦИЯ СЕРТИФИКАТА =====
+            function generateCertificate(download = false) {
+                const cl = document.getElementById('cl').value;
+                const trcd = document.getElementById('trcd').value;
+                const trp = document.getElementById('trp').value;
+                const tras = document.getElementById('tras').value;
+                const frequency = document.getElementById('frequency').value;
+                const chipType = document.getElementById('chip-type').value;
+                const motherboard = document.querySelector('#motherboard option:checked').text;
+                
+                // Обрезаем название материнской платы
+                const mbShort = motherboard.split(' ')[0] + ' ' + 
+                               motherboard.split(' ')[1].replace('AORUS', '').trim();
+                
+                // Обновляем данные сертификата
+                document.getElementById('cert-frequency').textContent = frequency;
+                document.getElementById('cert-timings').textContent = `${cl}-${trcd}-${trp}-${tras}`;
+                document.getElementById('cert-chip').textContent = chipRecommendations[chipType].name;
+                document.getElementById('cert-mb').textContent = mbShort;
+                document.getElementById('cert-ns').textContent = `${(cl * 2000 / frequency).toFixed(2)} нс`;
+                
+                // Расчёт улучшения
+                const xmpCl = 36;
+                const xmpNs = (xmpCl * 2000 / frequency).toFixed(2);
+                const userNs = (cl * 2000 / frequency).toFixed(2);
+                const nsImprovement = (xmpNs - userNs).toFixed(2);
+                
+                document.getElementById('cert-improvement').textContent = `+${nsImprovement} нс`;
+                
+                // Показываем сертификат
+                document.getElementById('stability-certificate').style.display = 'block';
+                
+                // Настройка ссылки для Reddit
+                const redditUrl = `https://www.reddit.com/r/overclocking/submit?title=DDR5-Timing-Calculator%3A+улучшил+разгон+с+таймингами+${cl}-${trcd}-${trp}-${tras}&text=Попробуйте+бесплатный+калькулятор+субтаймингов+DDR5%3A%0Ahttps%3A%2F%2Fxxnessixx.github.io%2FDDR5-Timing-Calculator%2FDDR5-Calculator.html%0A%0AПоддержка+${chipRecommendations[chipType].name}%2C+расчёт+задержек+в+наносекундах%2C+рекомендации+для+${mbShort}`;
+                document.getElementById('reddit-share').href = redditUrl;
+                
+                // Если нужно скачать, запускаем процесс сохранения
+                if (download) {
+                    const certificate = document.getElementById('stability-certificate');
+                    
+                    // Добавляем временный класс для стилей при экспорте
+                    certificate.classList.add('export-mode');
+                    
+                    // Показываем лоадер
+                    const originalText = document.getElementById('download-certificate').innerHTML;
+                    document.getElementById('download-certificate').innerHTML = '🔄 Генерация изображения...';
+                    document.getElementById('download-certificate').disabled = true;
+                    
+                    // Используем html2canvas для создания изображения
+                    html2canvas(certificate, {
+                        backgroundColor: getComputedStyle(document.body).backgroundColor,
+                        scale: 2, // Увеличиваем качество
+                        useCORS: true,
+                        allowTaint: true,
+                        logging: false
+                    }).then(canvas => {
+                        // Создаем ссылку для скачивания
+                        const link = document.createElement('a');
+                        link.download = `DDR5-Certificate-${Date.now()}.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                        
+                        // Восстанавливаем кнопку
+                        document.getElementById('download-certificate').innerHTML = originalText;
+                        document.getElementById('download-certificate').disabled = false;
+                        
+                        // Удаляем временный класс
+                        certificate.classList.remove('export-mode');
+                    }).catch(error => {
+                        console.error('Ошибка при генерации изображения:', error);
+                        document.getElementById('download-certificate').innerHTML = originalText;
+                        document.getElementById('download-certificate').disabled = false;
+                        alert('Произошла ошибка при создании изображения. Попробуйте снова или используйте скриншот.');
+                    });
+                }
+            }
+            
+            // Автоматически генерируем при расчёте
+            generateCertificate();
+            
             // Расчет рекомендуемых напряжений
             let vddRec, socRec, vddgRec, procodtRec;
+            
             if (mbRec.socVoltage) {
                 socRec = mbRec.socVoltage[aggressiveness];
                 vddgRec = mbRec.vddg[aggressiveness];
@@ -1327,200 +1831,175 @@
                 vddgRec = "1.00-1.10В";
                 procodtRec = "48-60Ω";
             }
+            
             vddRec = `${chipRec.minVdd + (aggressiveness === 'aggressive' ? 0.05 : 0).toFixed(2)}-${chipRec.maxVdd}В`;
+            
             // Если tRAS ниже рекомендуемого, увеличиваем напряжения
             if (tras < minRecommendedTras) {
                 vddRec = `${(chipRec.minVdd + 0.1).toFixed(2)}-${(chipRec.maxVdd + 0.05).toFixed(2)}В (минимум)`;
             }
+            
             // Заполняем рекомендации по напряжениям
             document.getElementById('vdd-recommendation').textContent = vddRec;
             document.getElementById('soc-recommendation').textContent = socRec;
             document.getElementById('vddg-recommendation').textContent = vddgRec;
             document.getElementById('procodt-voltage-recommendation').textContent = procodtRec;
+            
             // Настройка вкладок
             const tabs = document.querySelectorAll('.tab');
             const tabContents = document.querySelectorAll('.tab-content');
+            
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     // Удаляем активный класс со всех вкладок
                     tabs.forEach(t => t.classList.remove('active'));
                     tabContents.forEach(c => c.classList.remove('active'));
+                    
                     // Добавляем активный класс к выбранной вкладке
                     tab.classList.add('active');
                     document.getElementById(tab.dataset.tab + '-content').classList.add('active');
                 });
             });
+            
+            // Перенастройка обработчика кнопки после генерации сертификата
+            setTimeout(setupDownloadButton, 100);
         }
+        
+        // ===== 1. ДОБАВЛЯЕМ ОТСТУП ВВЕРХУ ДЛЯ ХЕДЕРА =====
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const starBar = document.getElementById('star-bar');
+                if (starBar) {
+                    document.querySelector('.container').style.paddingTop = 
+                      (starBar.offsetHeight + 20) + 'px';
+                }
+            }, 100);
+        });
+        
+        // ===== 2. АДАПТИРУЕМ ПОД ТЁМНУЮ ТЕМУ =====
+        function updateBarTheme() {
+          const isDark = document.body.classList.contains('dark-theme') || 
+                        (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          
+          const bar = document.getElementById('star-bar');
+          if (!bar) return;
+          
+          if (isDark) {
+            bar.style.setProperty('--bar-bg', '#2d3748');
+            bar.style.setProperty('--bar-text', '#e2e8f0');
+            bar.style.setProperty('--bar-border', '#4a5568');
+            bar.style.setProperty('--bar-hint', '#a0aec0');
+            bar.style.setProperty('--star-btn-bg', '#4299e1');
+            bar.style.setProperty('--star-btn-shadow', 'rgba(66, 153, 225, 0.3)');
+          } else {
+            bar.style.removeProperty('--bar-bg');
+            bar.style.removeProperty('--bar-text');
+            bar.style.removeProperty('--bar-border');
+            bar.style.removeProperty('--bar-hint');
+            bar.style.removeProperty('--star-btn-bg');
+            bar.style.removeProperty('--star-btn-shadow');
+          }
+        }
+        
+        // Запускаем при загрузке и при изменении темы
+        document.addEventListener('DOMContentLoaded', function() {
+            updateBarTheme();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateBarTheme);
+        });
+        
+        // ===== 3. УЛУЧШЕННЫЙ СЧЁТЧИК ЗВЁЗД =====
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('https://api.github.com/repos/XXNessIXX/DDR5-Timing-Calculator')
+              .then(response => response.json())
+              .then(data => {
+                document.getElementById('star-counter').textContent = 
+                  data.stargazers_count > 30 ? data.stargazers_count : '37+';
+              })
+              .catch(() => {
+                document.getElementById('star-counter').textContent = '37+';
+              });
+        });
+        
+        // ===== 4. ПЛАВНОЕ ПОЯВЛЕНИЕ ЧЕРЕЗ 10 СЕКУНД =====
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const bar = document.getElementById('star-bar');
+                if (bar) bar.style.opacity = '1';
+            }, 10000);
+        });
+        
+        // ===== 1. ЗАГРУЗКА КОНФИГУРАЦИЙ ИЗ PINNED ISSUE =====
+        async function loadConfigs() {
+          try {
+            const response = await fetch('https://api.github.com/repos/XXNessIXX/DDR5-Timing-Calculator/issues?labels=success');
+            const issues = await response.json();
+            
+            const configList = document.getElementById('config-list');
+            configList.innerHTML = '';
+            
+            if (issues.length === 0) {
+              configList.innerHTML = '<div class="info">Пока нет конфигураций. Станьте первым!</div>';
+              return;
+            }
+            
+            // Обновляем дату
+            document.getElementById('last-update').textContent = 
+              new Date(issues[0].updated_at).toLocaleDateString();
+            
+            // Отображаем топ-5 конфигураций
+            issues.slice(0, 5).forEach(issue => {
+              const config = document.createElement('div');
+              config.className = 'recommendation';
+              config.style.marginBottom = '15px';
+              config.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <strong>${issue.title}</strong>
+                  <span style="background: #e8f5e9; padding: 3px 8px; border-radius: 12px; font-size: 0.8em;">
+                    ${new Date(issue.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+                <div style="margin-top: 8px; line-height: 1.5;">
+                  ${issue.body.replace(/\n/g, '<br>')}
+                </div>
+              `;
+              configList.appendChild(config);
+            });
+          } catch (e) {
+            document.getElementById('config-list').innerHTML = 
+              '<div class="error">Ошибка загрузки конфигураций. Проверьте pinned issue.</div>';
+          }
+        }
+        
+        // ===== 2. КНОПКА ДЛЯ ДОБАВЛЕНИЯ КОНФИГУРАЦИИ =====
+        function submitConfig() {
+          const cl = document.getElementById('cl').value;
+          const trcd = document.getElementById('trcd').value;
+          const frequency = document.getElementById('frequency').value;
+          const chipType = document.getElementById('chip-type').value;
+          
+          const title = `DDR5-${frequency} ${cl}-${trcd}-${trcd}-${cl*2} @ ${chipType}`;
+          const body = `**Платформа**: ${document.getElementById('motherboard').selectedOptions[0].text}\n` +
+                      `**Чипы**: ${document.querySelector('#chip-type option:checked').text}\n` +
+                      `**Тайминги**: ${cl}-${trcd}-${trcd}-${cl*2} @ ${frequency} МТ/с\n` +
+                      `**Стабильность**: [Укажите результаты тестов]\n` +
+                      `**Напряжения**: DRAM [В], SOC [В]`;
+          
+          window.open(
+            `https://github.com/XXNessIXX/DDR5-Timing-Calculator/issues/new?assignees=&labels=success&title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`,
+            '_blank'
+          );
+        }
+        
+        // Добавляем вкладку "Комьюнити"
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelector('.tabs');
+            if (tabs) {
+                tabs.innerHTML += `<div class="tab" data-tab="community">Комьюнити</div>`;
+                
+                // Автоматическая загрузка при открытии вкладки
+                document.querySelector('.tab[data-tab="community"]').addEventListener('click', loadConfigs);
+            }
+        });
     </script>
-<!-- ===== ЗВЁЗДНЫЙ БАР (НЕ КОНФЛИКТУЕТ С КОНТЕНТОМ) ===== -->
-<div id="star-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
-            padding: 12px 25px; border-radius: 30px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 999; 
-            max-width: 90%; text-align: center; 
-            transition: all 0.3s ease; opacity: 0; 
-            background: var(--bar-bg, #fff); 
-            color: var(--bar-text, #333);
-            border: 1px solid var(--bar-border, #e0e0e0);">
-  
-  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
-    <span>🔥 <strong id="star-counter">37</strong> человек улучшили разгон этим калькулятором</span>
-    
-    <a href="https://github.com/XXNessIXX/DDR5-Timing-Calculator/stargazers" 
-       target="_blank" 
-       style="background: var(--star-btn-bg, #2ea44f); color: white; padding: 6px 15px; 
-              border-radius: 20px; text-decoration: none; font-weight: 600; 
-              display: inline-flex; align-items: center; gap: 5px; 
-              transition: all 0.2s; box-shadow: 0 2px 4px var(--star-btn-shadow, rgba(46, 164, 79, 0.3));">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-        <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.656 1.893 1.614-4.675a.5.5 0 0 0-.401-.585l-4.492-1.497 4.492-1.497a.5.5 0 0 0 .216-.865l-1.614-4.675 3.656 1.893a.5.5 0 0 0 .497 0l3.656-1.893-1.614 4.675a.5.5 0 0 0 .216.865l4.492 1.497-4.492 1.497a.5.5 0 0 0-.401.585l1.614 4.675-3.656-1.893a.5.5 0 0 0-.497 0z"/>
-      </svg>
-      Поставить звезду на GitHub
-    </a>
-    
-    <span style="font-size: 0.85em; color: var(--bar-hint, #666); display: flex; align-items: center; gap: 5px;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2z"/>
-      </svg>
-      Это бесплатно и помогает другим найти калькулятор
-    </span>
-  </div>
-</div>
-
-<script>
-// ===== 1. ДОБАВЛЯЕМ ОТСТУП ВНИЗУ СТРАНИЦЫ (ЧТОБЫ НЕ ПЕРЕКРЫВАЛ КОНТЕНТ) =====
-document.querySelector('.container').style.paddingBottom = '80px';
-
-// ===== 2. АДАПТИРУЕМ ПОД ТЁМНУЮ ТЕМУ =====
-function updateBarTheme() {
-  const isDark = document.body.classList.contains('dark-mode') || 
-                (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  
-  const bar = document.getElementById('star-bar');
-  if (!bar) return;
-  
-  if (isDark) {
-    bar.style.setProperty('--bar-bg', '#2d3748');
-    bar.style.setProperty('--bar-text', '#e2e8f0');
-    bar.style.setProperty('--bar-border', '#4a5568');
-    bar.style.setProperty('--bar-hint', '#a0aec0');
-    bar.style.setProperty('--star-btn-bg', '#4299e1');
-    bar.style.setProperty('--star-btn-shadow', 'rgba(66, 153, 225, 0.3)');
-  } else {
-    bar.style.removeProperty('--bar-bg');
-    bar.style.removeProperty('--bar-text');
-    bar.style.removeProperty('--bar-border');
-    bar.style.removeProperty('--bar-hint');
-    bar.style.removeProperty('--star-btn-bg');
-    bar.style.removeProperty('--star-btn-shadow');
-  }
-}
-
-// Запускаем при загрузке и при изменении темы
-updateBarTheme();
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateBarTheme);
-
-// ===== 3. УЛУЧШЕННЫЙ СЧЁТЧИК ЗВЁЗД =====
-fetch('https://api.github.com/repos/XXNessIXX/DDR5-Timing-Calculator')
-  .then(response => response.json())
-  .then(data => {
-    document.getElementById('star-counter').textContent = 
-      data.stargazers_count > 30 ? data.stargazers_count : '37+';
-  })
-  .catch(() => {
-    document.getElementById('star-counter').textContent = '37+';
-  });
-
-// ===== 4. ПОЯВЛЕНИЕ ЧЕРЕЗ 60 СЕКУНД (БЕЗ КОНФЛИКТА С КОНТЕНТОМ) =====
-setTimeout(() => {
-  const bar = document.getElementById('star-bar');
-  if (bar) bar.style.opacity = '1';
-}, 60000);
-</script>
-<!-- ===== КОНЕЦ КОДА БАРА ===== -->
-<!-- ===== РАЗДЕЛ "УСПЕШНЫЕ КОНФИГУРАЦИИ" ===== -->
-<div class="tab-content" id="community-content" style="display: none;">
-  <h3>Реальные рабочие конфигурации (обновлено: <span id="last-update">-</span>)</h3>
-  
-  <div id="config-list" style="margin: 20px 0;">
-    <!-- Сюда будут загружаться конфигурации -->
-    <div class="info">Загружаю данные с GitHub... ⏳</div>
-  </div>
-  
-  <button onclick="submitConfig()" class="btn" style="background: #673ab7;">
-    📤 Добавить свою конфигурацию
-  </button>
-</div>
-
-<script>
-// ===== 1. ЗАГРУЗКА КОНФИГУРАЦИЙ ИЗ PINNED ISSUE =====
-async function loadConfigs() {
-  try {
-    const response = await fetch('https://api.github.com/repos/XXNessIXX/DDR5-Timing-Calculator/issues?labels=success');
-    const issues = await response.json();
-    
-    const configList = document.getElementById('config-list');
-    configList.innerHTML = '';
-    
-    if (issues.length === 0) {
-      configList.innerHTML = '<div class="info">Пока нет конфигураций. Станьте первым!</div>';
-      return;
-    }
-    
-    // Обновляем дату
-    document.getElementById('last-update').textContent = 
-      new Date(issues[0].updated_at).toLocaleDateString();
-    
-    // Отображаем топ-5 конфигураций
-    issues.slice(0, 5).forEach(issue => {
-      const config = document.createElement('div');
-      config.className = 'recommendation';
-      config.style.marginBottom = '15px';
-      config.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <strong>${issue.title}</strong>
-          <span style="background: #e8f5e9; padding: 3px 8px; border-radius: 12px; font-size: 0.8em;">
-            ${new Date(issue.created_at).toLocaleDateString()}
-          </span>
-        </div>
-        <div style="margin-top: 8px; line-height: 1.5;">
-          ${issue.body.replace(/\n/g, '<br>')}
-        </div>
-      `;
-      configList.appendChild(config);
-    });
-  } catch (e) {
-    document.getElementById('config-list').innerHTML = 
-      '<div class="error">Ошибка загрузки конфигураций. Проверьте pinned issue.</div>';
-  }
-}
-
-// ===== 2. КНОПКА ДЛЯ ДОБАВЛЕНИЯ КОНФИГУРАЦИИ =====
-function submitConfig() {
-  const cl = document.getElementById('cl').value;
-  const trcd = document.getElementById('trcd').value;
-  const frequency = document.getElementById('frequency').value;
-  const chipType = document.getElementById('chip-type').value;
-  
-  const title = `DDR5-${frequency} ${cl}-${trcd}-${trcd}-${cl*2} @ ${chipType}`;
-  const body = `**Платформа**: ${document.getElementById('motherboard').selectedOptions[0].text}\n` +
-              `**Чипы**: ${document.querySelector('#chip-type option:checked').text}\n` +
-              `**Тайминги**: ${cl}-${trcd}-${trcd}-${cl*2} @ ${frequency} МТ/с\n` +
-              `**Стабильность**: [Укажите результаты тестов]\n` +
-              `**Напряжения**: DRAM [В], SOC [В]`;
-  
-  window.open(
-    `https://github.com/XXNessIXX/DDR5-Timing-Calculator/issues/new?assignees=&labels=success&title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`,
-    '_blank'
-  );
-}
-
-// Добавляем вкладку "Комьюнити"
-document.querySelector('.tabs').innerHTML += 
-  `<div class="tab" data-tab="community">Комьюнити</div>`;
-
-// Автоматическая загрузка при открытии вкладки
-document.querySelector('.tab[data-tab="community"]').addEventListener('click', loadConfigs);
-</script>
-<!-- ===== КОНЕЦ КОДА УСПЕШНЫХ КОНФИГУРАЦИЙЙ ===== -->
 </body>
 </html>
